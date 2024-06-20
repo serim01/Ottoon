@@ -2,6 +2,7 @@ package com.sparta.ottoon.profile.service;
 
 import com.sparta.ottoon.auth.entity.PasswordLog;
 import com.sparta.ottoon.auth.entity.User;
+import com.sparta.ottoon.auth.entity.UserStatus;
 import com.sparta.ottoon.auth.repository.PasswordLogRepository;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.common.exception.CustomException;
@@ -30,15 +31,17 @@ public class ProfileService {
     }
 
     @Transactional
-    public ProfileResponseDto updateUser(String userName, ProfileRequestDto requestDto) {
+    public ProfileResponseDto updateUser(String userName, String updateUsername, ProfileRequestDto requestDto) {
         User user = findByUsername(userName);
+        validateUserPermissions(user, updateUsername);
         user.updateUserInfo(requestDto);
         return new ProfileResponseDto(user);
     }
 
     @Transactional
-    public void updateUserPassword(String userName, UserPwRequestDto requestDto) {
+    public void updateUserPassword(String userName, String updateUsername, UserPwRequestDto requestDto) {
         User user = findByUsername(userName);
+        validateUserPermissions(user, updateUsername);
         //현재 비밀번호와 입력한 비밀번호가 다른지 비교
         if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
@@ -75,5 +78,13 @@ public class ProfileService {
         return userRepository.findByUsername(userName).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+    }
+
+    //본인 프로필이나 관리자권한인지 확인
+    private void validateUserPermissions(User user, String userName){
+        User updateUser = findByUsername(userName);
+        if(!user.equals(updateUser) && !updateUser.getStatus().equals(UserStatus.ADMIN)){
+            throw new CustomException(ErrorCode.USER_FORBIDDEN);
+        }
     }
 }
