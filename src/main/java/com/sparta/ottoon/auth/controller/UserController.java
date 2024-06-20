@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,10 @@ public class UserController {
      * @return
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@AuthenticationPrincipal User userDetails) {
+    public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetails userDetails) {
         userService.logout(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 하였습니다.");
     }
+
+
 }
