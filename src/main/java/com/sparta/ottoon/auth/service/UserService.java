@@ -60,4 +60,19 @@ public class UserService {
         // 비밀번호 로그 DB에 저장
         passwordLogRepository.save(new PasswordLog(password, saveUser));
     }
+
+    /**
+     * refresh token을 없앰으로써 로그아웃
+     * @param username
+     */
+    @Transactional
+    public void logout(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+        );
+
+        // user의 refresh token을 없앤다.
+        user.clearRefreshToken();
+        userRepository.save(user);
+    }
 }

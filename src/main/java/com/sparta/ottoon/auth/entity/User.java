@@ -59,4 +59,8 @@ public class User extends Timestamped implements UserDetails {
     public void updateUserPassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void clearRefreshToken() {
+        this.refreshToken = null;
+    }
 }
