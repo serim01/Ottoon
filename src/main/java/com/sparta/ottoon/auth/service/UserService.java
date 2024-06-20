@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -23,6 +24,12 @@ public class UserService {
 
     @Value("${ADMIN_TOKEN}")
     private String ADMIN_TOKEN;
+
+    /**
+     * 회원가입
+     * @param requestDto
+     */
+    @Transactional
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -38,6 +45,7 @@ public class UserService {
             throw new IllegalArgumentException("중복된 이메일입니다.");
         }
 
+        // 관리자 권한 검사
         UserStatus status = UserStatus.ACTIVE;
         if (requestDto.isAdmin()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
@@ -46,7 +54,10 @@ public class UserService {
             status = UserStatus.ADMIN;
         }
 
+        // 회원가입한 user DB에 저장
         User saveUser = userRepository.save(new User(username, password, email, status));
+
+        // 비밀번호 로그 DB에 저장
         passwordLogRepository.save(new PasswordLog(password, saveUser));
     }
 }

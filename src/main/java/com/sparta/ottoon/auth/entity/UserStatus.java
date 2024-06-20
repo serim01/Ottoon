@@ -1,5 +1,8 @@
 package com.sparta.ottoon.auth.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum UserStatus {
    ACTIVE("정상"),
    WITHDRAW("탈퇴"),
@@ -10,9 +13,5 @@ public enum UserStatus {
 
    UserStatus(String status) {
       this.status = status;
-   }
-
-   public String getStatus() {
-      return status;
    }
 }
