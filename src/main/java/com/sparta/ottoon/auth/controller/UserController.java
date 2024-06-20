@@ -51,4 +51,15 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
         return ResponseEntity.ok().body("swagger 상 api 사용을 위한 로그인");
     }
+
+    /**
+     * 로그아웃
+     * @param userDetails
+     * @return
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@AuthenticationPrincipal User userDetails) {
+        userService.logout(userDetails.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 하였습니다.");
+    }
 }
