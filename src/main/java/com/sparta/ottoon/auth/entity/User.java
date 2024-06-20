@@ -1,6 +1,7 @@
 package com.sparta.ottoon.auth.entity;
 
 import com.sparta.ottoon.common.Timestamped;
+import com.sparta.ottoon.profile.dto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,8 @@ public class User extends Timestamped implements UserDetails {
     @Column(nullable = false, length = 50)
     private String email;
     @Column(length = 100)
+    private String nickname;
+    @Column(length = 100)
     private String intro;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -46,5 +49,14 @@ public class User extends Timestamped implements UserDetails {
 
     public void updateRefresh(String refresh) {
         this.refreshToken = refresh;
+    }
+
+    public void updateUserInfo(ProfileRequestDto requestDto){
+        this.nickname = requestDto.getNickname();
+        this.intro = requestDto.getIntro();
+    }
+
+    public void updateUserPassword(String newPassword) {
+        this.password = newPassword;
     }
 }
