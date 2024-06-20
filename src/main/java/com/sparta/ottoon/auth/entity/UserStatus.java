@@ -1,10 +1,14 @@
 package com.sparta.ottoon.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.stream.Stream;
+
 public enum UserStatus {
-   ACTIVE("정상"),
-   WITHDRAW("탈퇴"),
-   BLOCK("차단"),
-   ADMIN("관리자");
+   ACTIVE(Authority.ACTIVE),
+   WITHDRAW(Authority.WITHDRAW),
+   BLOCK(Authority.BLOCK),
+   ADMIN(Authority.ADMIN);
 
    final private String status;
 
@@ -15,4 +19,20 @@ public enum UserStatus {
    public String getStatus() {
       return status;
    }
+
+   public static class Authority {
+      public static final String ACTIVE = "ROLE_ACTIVE";
+      public static final String WITHDRAW = "ROLE_WITHDRAW";
+      public static final String BLOCK = "ROLE_BLOCK";
+      public static final String ADMIN = "ROLE_ADMIN";
+   }
+
+   @JsonCreator
+   public static UserStatus parsing(String inputValue) {
+      return Stream.of(UserStatus.values())
+              .filter(UserStatus -> UserStatus.toString().equals(inputValue.toUpperCase()))
+              .findFirst()
+              .orElse(null);
+   }
+
 }
