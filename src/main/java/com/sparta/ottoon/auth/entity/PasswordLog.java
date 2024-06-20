@@ -2,11 +2,13 @@ package com.sparta.ottoon.auth.entity;
 
 import com.sparta.ottoon.common.Timestamped;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="passwordlog")
 @NoArgsConstructor
+@Getter
 public class PasswordLog extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
