@@ -29,7 +29,7 @@ public class User extends Timestamped implements UserDetails {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserStatus status;
-    @Column(length = 100)
+    @Column
     private String refreshToken;
 
     public User(String username, String password, String email, UserStatus status) {
@@ -42,5 +42,9 @@ public class User extends Timestamped implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList(); // 권한 관련 설정
+    }
+
+    public void updateRefresh(String refresh) {
+        this.refreshToken = refresh;
     }
 }
