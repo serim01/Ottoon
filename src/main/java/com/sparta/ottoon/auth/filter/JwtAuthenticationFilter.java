@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      * @param authResult
      */
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         String username = ((UserDetails) authResult.getPrincipal()).getUsername();
 
         // access token과 refresh 토큰 생성
@@ -77,8 +77,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // refresh token 저장
         saveRefreshToken(username, refresh);
 
-        // response header에 access token 넣기
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token); // response header에 access token 넣기
+
+        response.setStatus(200);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write("로그인에 성공하였습니다.");
     }
 
     /**
@@ -88,8 +91,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      * @param failed
      */
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setStatus(401);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write("로그인 실패하였습니다.");
     }
 
     /**
