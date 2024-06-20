@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j(topic = "JwtAuthorizationFilter")
 @RequiredArgsConstructor
@@ -41,6 +42,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 헤더에서 jwt token을 가져온다.
         String token = jwtUtil.getJwtTokenFromHeader(request);
+
+
 
         if (StringUtils.hasText(token)) { // token의 값이 null이나 빈칸이 아닐 경우
 
@@ -102,12 +105,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
            case EXPRIED:
                // access token이 만료되었으므로 refresh token을 기반으로 처리해준다.
                updateAccessToken(response, token);
-               break;
+               return;
            default:
                response.setStatus(401);
                response.setContentType("text/plain;charset=UTF-8");
                response.getWriter().write("유효하지 않은 토큰입니다.");
+               return;
        }
+
+       checkBlacklist(token); // 무효한 토큰인지 검사
    }
 
     /**
@@ -132,6 +138,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             response.getWriter().write("refresh 토큰이 만료되었습니다.");
         } else {
             throw new RuntimeException("refresh token이 유효하지 않습니다.");
+        }
+    }
+
+    /**
+     * 로그아웃한 사용자인지 검사
+     * @param token
+     */
+    private void checkBlacklist(String token) {
+        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저는 없습니다.")
+        );
+
+        // refresh token이 null이라면 로그아웃한 사용자
+        if (Objects.isNull(user.getRefreshToken())) {
+            throw new RuntimeException("무효한 토큰입니다.");
         }
     }
 }
