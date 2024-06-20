@@ -1,5 +1,6 @@
 package com.sparta.ottoon.auth.controller;
 
+import com.sparta.ottoon.auth.dto.LoginRequestDto;
 import com.sparta.ottoon.auth.dto.SignupRequestDto;
 import com.sparta.ottoon.auth.service.UserService;
 import jakarta.validation.Valid;
@@ -32,5 +33,10 @@ public class UserController {
 
         userService.signup(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
+        return ResponseEntity.ok().body("swagger 상 api 사용을 위한 로그인");
     }
 }
