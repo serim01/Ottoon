@@ -1,14 +1,12 @@
 package com.sparta.ottoon.comment.entity;
 
-import com.sparta.ottoon.common.Timestamped;
 import com.sparta.ottoon.auth.entity.User;
+import com.sparta.ottoon.common.Timestamped;
 import com.sparta.ottoon.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.sql.Update;
 
 @Entity
 @Getter
@@ -17,7 +15,7 @@ import org.hibernate.sql.Update;
 public class Comment extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
 
     @Column(nullable = false)
     private String comment;

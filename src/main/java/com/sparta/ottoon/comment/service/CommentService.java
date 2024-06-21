@@ -55,7 +55,7 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(()->
                 new CustomException(ErrorCode.POST_NOT_FOUND));
         // 해당 post 조회
-        List<Comment> commentList = commentRepository.findByPostId(post.getPostId());
+        List<Comment> commentList = commentRepository.findByPostId(post.getId());
         return commentList.stream().map(CommentResponseDto::new).toList();
     }
 
@@ -65,7 +65,7 @@ public class CommentService {
         User user = userRepository.findByUsername(username).orElseThrow(()->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
         // 수정할 comment 찾기
-        Comment comment = commentRepository.findByCommentIdAndPostIdAndUserId(commentId,postId,user.getId()).orElseThrow(()->
+        Comment comment = commentRepository.findByIdAndPostIdAndUserId(commentId,postId,user.getId()).orElseThrow(()->
                 new CustomException(ErrorCode.FAIL_COMMENT));
         // 찾은 comment update
         comment.updateComment(commentRequestDto.getComment());

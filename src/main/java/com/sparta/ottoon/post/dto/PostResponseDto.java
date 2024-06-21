@@ -28,7 +28,7 @@ public class PostResponseDto {
         return PostResponseDto.builder()
                 .message(message)
                 .statusCode(statusCode)
-                .postId(post.getPostId())
+                .postId(post.getId())
                 .contents(post.getContents())
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
