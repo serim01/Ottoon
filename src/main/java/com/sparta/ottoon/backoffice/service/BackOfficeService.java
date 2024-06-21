@@ -64,11 +64,11 @@ public class BackOfficeService {
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(ErrorCode.FAIL_FIND_POST));
         if (post.getPostStatus().equals(PostStatus.NOTICE)) {
             post.setPostStatus(PostStatus.GENERAL);
-            post.set_top(true);
+            post.setTop(true);
             return ResponseEntity.ok("해당 게시물이 일반 게시물로 변경되었습니다.");
         }
         post.setPostStatus(PostStatus.NOTICE);
-        post.set_top(false);
+        post.setTop(false);
         return ResponseEntity.ok("해당 게시물이 공지 게시물로 변경되었습니다.");
 
     }

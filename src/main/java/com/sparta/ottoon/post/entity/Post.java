@@ -5,9 +5,11 @@ import com.sparta.ottoon.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "posts")
 @NoArgsConstructor
 public class Post extends Timestamped {
@@ -32,10 +34,6 @@ public class Post extends Timestamped {
     public Post(String contents){
         this.contents = contents;
         this.postStatus = PostStatus.GENERAL;
-    }
-
-    public void setUser(User user){
-        this.user = user;
     }
 
     public void update(String contents) {
