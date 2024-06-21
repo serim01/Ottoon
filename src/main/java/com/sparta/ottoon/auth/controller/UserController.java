@@ -6,22 +6,21 @@ import com.sparta.ottoon.auth.dto.SignupRequestDto;
 import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.service.SocialService;
 import com.sparta.ottoon.auth.service.UserService;
-import jakarta.servlet.http.Cookie;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Tag(name = "USER API", description = "USER API 입니다")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -36,6 +35,7 @@ public class UserController {
      * @param bindingResult : valid를 검사하여 오류가 있으면 알려준다.
      * @return
      */
+    @Operation(summary = "signup", description = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
         // @Valid 에러가 있는지 확인
@@ -55,6 +55,7 @@ public class UserController {
      * @param loginRequestDto
      * @return
      */
+    @Operation(summary = "login test version", description = "더미 로그인")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
         return ResponseEntity.ok().body("swagger 상 api 사용을 위한 로그인");
@@ -65,6 +66,7 @@ public class UserController {
      * @param userDetails
      * @return
      */
+    @Operation(summary = "logout", description = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetails userDetails) {
         userService.logout(userDetails.getUsername());
@@ -78,6 +80,7 @@ public class UserController {
      * @return
      * @throws JsonProcessingException
      */
+    @Operation(summary = "kakao login", description = "카카오 소셜 로그인")
     @GetMapping("/kakao")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = socialService.kakaoLogin(code);
