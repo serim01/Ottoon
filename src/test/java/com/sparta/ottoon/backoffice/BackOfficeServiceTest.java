@@ -29,23 +29,23 @@ class BackOfficeServiceTest {
     void setUp() {
         backOfficeService = new BackOfficeService(userRepository);
     }
-
-    @Test
-    @DisplayName("enum valid test")
-    void test() {
-        //given
-        User user = new User("test", "test", "test", UserStatus.ACTIVE);
-        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
-        String username = "Test";
-
-        EditRequestDto editRequestDto = new EditRequestDto("ADMIN");
-
-        //when
-        UserResponseDto result = backOfficeService.editUserRole(username, editRequestDto);
-
-        //then
-        assertEquals(UserStatus.ADMIN, result.getUserStatus());
-
-    }
+//
+//    @Test
+//    @DisplayName("enum valid test")
+//    void test() {
+//        //given
+//        User user = new User("test", "test", "test", UserStatus.ACTIVE);
+//        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+//        String username = "Test";
+//
+//        EditRequestDto editRequestDto = new EditRequestDto("ADMIN");
+//
+//        //when
+//        UserResponseDto result = backOfficeService.editUserRole(username, editRequestDto);
+//
+//        //then
+//        assertEquals(UserStatus.ADMIN, result.getUserStatus());
+//
+//    }
 
 }

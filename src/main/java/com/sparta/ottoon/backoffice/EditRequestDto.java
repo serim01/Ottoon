@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditRequestDto {
-//    @Enum(enumclass = UserStatus.class, ignoreCase = true)
-    UserStatus userStatus;
+    @Enum(enumclass = UserStatus.class, ignoreCase = true, message = "enum : 잘못된 입력입니다.")
+    private String userStatus;
 }

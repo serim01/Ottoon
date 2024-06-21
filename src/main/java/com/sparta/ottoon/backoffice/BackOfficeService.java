@@ -8,7 +8,6 @@ import com.sparta.ottoon.common.exception.ErrorCode;
 import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.entity.PostStatus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +19,11 @@ import java.util.List;
 public class BackOfficeService {
 
     private final UserRepository userRepository;
+    //PostRepository가 없어서 주석처리
 //    private final PostRepository postRepository;
 
+
+    //UserResponsDto가 없어서 주석처리
 
 //    public List<UserResponseDto> getAllUsers() {
 //        List<User> userList = userRepository.findAll();
@@ -39,8 +41,7 @@ public class BackOfficeService {
                 case "ACTIVE" -> user.setStatus(UserStatus.ACTIVE);
                 case "ADMIN" -> user.setStatus(UserStatus.ADMIN);
                 case "BLOCK" -> user.setStatus(UserStatus.BLOCK);
-                case "DELETE" -> userRepository.delete(user);
-                default -> throw new CustomException(ErrorCode.NOTENUMVALUE);
+                default -> throw new CustomException(ErrorCode.NOT_ENUM_VALUE);
             }
         }
         UserResponseDto userResponseDto = new UserResponseDto(user);
@@ -48,9 +49,11 @@ public class BackOfficeService {
     }
 
 
+    //PostRepository가 없어서 주석처리
+
 //    @Transactional
 //    public ResponseEntity<String> noticePost(Long postId) {
-//        Post post = postRepository.findById(postId).orElseThrow(ErrorCode.FAILFINDPOST);
+//        Post post = postRepository.findById(postId).orElseThrow(ErrorCode.FAIL_FIND_POST);
 //        if (post.getPostStatus().equals(PostStatus.NOTICE)) {
 //            post.setPostStatus(PostStatus.GENERAL);
 //            post.set_top(true);
@@ -65,7 +68,7 @@ public class BackOfficeService {
 
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.FAILFINDUSER));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
 

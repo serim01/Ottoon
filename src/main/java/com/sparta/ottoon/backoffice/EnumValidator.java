@@ -1,9 +1,10 @@
 package com.sparta.ottoon.backoffice;
 
+import com.sparta.ottoon.auth.entity.UserStatus;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class EnumValidator implements ConstraintValidator<Enum, java.lang.Enum> {
+public class EnumValidator implements ConstraintValidator<Enum, String> {
     private Enum annotation;
 
     @Override
@@ -12,15 +13,11 @@ public class EnumValidator implements ConstraintValidator<Enum, java.lang.Enum> 
     }
 
     @Override
-    public boolean isValid(java.lang.Enum value, ConstraintValidatorContext context) {
-        Object[] enumValues = this.annotation.enumclass().getEnumConstants();
-        if (enumValues != null) {
-            for (Object enumValue : enumValues) {
-                if (value.equals(enumValue.toString())) {
-                    return true;
-                }
-            }
+    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+
+        if (UserStatus.parsing(s) == null) {
+            return false;
         }
-        return false;
+        return true;
     }
 }

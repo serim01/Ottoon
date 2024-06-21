@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.stream.Stream;
 
+import lombok.Getter;
+
+@Getter
 public enum UserStatus {
    ACTIVE(Authority.ACTIVE),
    WITHDRAW(Authority.WITHDRAW),
