@@ -1,8 +1,8 @@
-package com.sparta.ottoon.auth.controller;
+package com.sparta.ottoon.post.controller;
 
-import com.sparta.ottoon.auth.dto.PostRequestDto;
-import com.sparta.ottoon.auth.dto.PostResponseDto;
-import com.sparta.ottoon.auth.service.PostService;
+import com.sparta.ottoon.post.dto.PostRequestDto;
+import com.sparta.ottoon.post.dto.PostResponseDto;
+import com.sparta.ottoon.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

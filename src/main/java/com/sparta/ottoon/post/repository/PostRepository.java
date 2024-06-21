@@ -1,6 +1,6 @@
-package com.sparta.ottoon.auth.repository;
+package com.sparta.ottoon.post.repository;
 
-import com.sparta.ottoon.auth.entity.Post;
+import com.sparta.ottoon.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

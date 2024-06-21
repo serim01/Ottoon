@@ -1,13 +1,14 @@
-package com.sparta.ottoon.auth.service;
+package com.sparta.ottoon.post.service;
 
-import com.sparta.ottoon.auth.dto.PostRequestDto;
-import com.sparta.ottoon.auth.dto.PostResponseDto;
+import com.sparta.ottoon.post.dto.PostRequestDto;
+import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.auth.repository.PostRepository;
+import com.sparta.ottoon.auth.entity.UserStatus;
+import com.sparta.ottoon.post.repository.PostRepository;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
-import com.sparta.ottoon.auth.entity.Post;
+import com.sparta.ottoon.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,7 +55,10 @@ public class PostService {
     public PostResponseDto update(long postId, PostRequestDto postRequestDto){
         Post post = findPostById(postId);
         Long logInUserId = getLogInUserId();
-        if (logInUserId.equals(post.getUser().getId())){
+        User user = getUserById(postId);
+        // 본인 계정 혹은 관리자 계정이면 게시글 수정 가능
+        if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)){
+            //if (logInUserId.equals(post.getUser().getId())){
             post.update(postRequestDto.getContents());
             return PostResponseDto.toDto("게시글 수정 완료", 200, post);
         } else {

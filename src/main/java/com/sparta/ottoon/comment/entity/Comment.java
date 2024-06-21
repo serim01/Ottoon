@@ -2,7 +2,7 @@ package com.sparta.ottoon.comment.entity;
 
 import com.sparta.ottoon.common.Timestamped;
 import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.auth.entity.Post;
+import com.sparta.ottoon.post.entity.Post;
 import jakarta.persistence.*;
 
 @Entity

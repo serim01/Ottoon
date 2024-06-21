@@ -1,5 +1,6 @@
-package com.sparta.ottoon.auth.entity;
+package com.sparta.ottoon.post.entity;
 
+import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;

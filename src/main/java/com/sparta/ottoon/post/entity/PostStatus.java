@@ -1,4 +1,4 @@
-package com.sparta.ottoon.auth.entity;
+package com.sparta.ottoon.post.entity;
 
 public enum PostStatus {
     NOTICE("공지"),
