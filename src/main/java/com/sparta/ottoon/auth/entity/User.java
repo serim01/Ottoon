@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -57,7 +59,14 @@ public class User extends Timestamped implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // 권한 관련 설정
+        UserStatus status = this.getStatus();
+        String authority = status.getStatus();
+
+        SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority);
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        grantedAuthorities.add(grantedAuthority);
+
+        return grantedAuthorities;
     }
 
     public void updateRefresh(String refresh) {

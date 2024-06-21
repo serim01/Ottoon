@@ -89,7 +89,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      */
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        return new UsernamePasswordAuthenticationToken(userDetails, null, user.getAuthorities());
     }
 
 
