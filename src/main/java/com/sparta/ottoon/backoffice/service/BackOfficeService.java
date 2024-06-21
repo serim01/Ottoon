@@ -38,16 +38,16 @@ public class BackOfficeService {
 
         if (!user.getStatus().equals(UserStatus.WITHDRAW)) {
             switch (editRequestDto.getUserStatus()) {
-                case "ACTIVE" -> user.setStatus(UserStatus.ACTIVE);
-                case "ADMIN" -> user.setStatus(UserStatus.ADMIN);
-                case "BLOCK" -> user.setStatus(UserStatus.BLOCK);
-                case "DELETE" ->{user.setStatus(UserStatus.DELETE);
+                case "ROLE_ACTIVE" -> user.setStatus(UserStatus.ACTIVE);
+                case "ROLE_ADMIN" -> user.setStatus(UserStatus.ADMIN);
+                case "ROLE_BLOCK" -> user.setStatus(UserStatus.BLOCK);
+                case "ROLE_DELETE" ->{user.setStatus(UserStatus.DELETE);
                     userRepository.delete(user);}
                 default -> throw new CustomException(ErrorCode.NOT_ENUM_VALUE);
             }
         } else {
             switch (editRequestDto.getUserStatus()) {
-                case "DELETE" -> userRepository.delete(user);
+                case "ROLE_DELETE" -> userRepository.delete(user);
                 default -> throw new CustomException(ErrorCode.CANNOT_EDIT);
             }
         }
