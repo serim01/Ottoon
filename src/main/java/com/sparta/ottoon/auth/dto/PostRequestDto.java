@@ -1,6 +1,6 @@
 package com.sparta.ottoon.auth.dto;
 
-import com.sparta.ottoon.post.entity.Post;
+import com.sparta.ottoon.auth.entity.Post;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

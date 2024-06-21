@@ -1,6 +1,5 @@
-package com.sparta.ottoon.post.entity;
+package com.sparta.ottoon.auth.entity;
 
-import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,6 +30,7 @@ public class Post extends Timestamped {
 
     public Post(String contents){
         this.contents = contents;
+        this.postStatus = PostStatus.GENERAL;
     }
 
     public void setUser(User user){
