@@ -7,22 +7,20 @@ import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.service.SocialService;
 import com.sparta.ottoon.auth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Tag(name = "USER API", description = "USER API 입니다")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
