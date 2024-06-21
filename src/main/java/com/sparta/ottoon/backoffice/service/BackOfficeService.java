@@ -8,6 +8,8 @@ import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
 import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.entity.PostStatus;
+import com.sparta.ottoon.post.repository.PostRepository;
+import com.sparta.ottoon.profile.dto.ProfileResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,9 +25,9 @@ public class BackOfficeService {
     private final PostRepository postRepository;
 
 
-    public List<UserResponseDto> getAllUsers() {
+    public List<ProfileResponseDto> getAllUsers() {
         List<User> userList = userRepository.findAll();
-        return userList.stream().map(UserResponseDto::new).toList();
+        return userList.stream().map(ProfileResponseDto::new).toList();
     }
 
 
@@ -59,7 +61,7 @@ public class BackOfficeService {
 
     @Transactional
     public ResponseEntity<String> noticePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(ErrorCode.FAIL_FIND_POST);
+        Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(ErrorCode.FAIL_FIND_POST));
         if (post.getPostStatus().equals(PostStatus.NOTICE)) {
             post.setPostStatus(PostStatus.GENERAL);
             post.set_top(true);

@@ -20,7 +20,7 @@ public enum ErrorCode {
     USER_FORBIDDEN(403, "본인 프로필만 수정이 가능합니다."),
     FAIL_COMMENT(400, "댓글 내용을 입력하지 않았습니다"),
     POST_NOT_FOUND(400, "등록된 게시글이 없습니다."),
-    FAIL_GETCOMMENT(400, "등록된 댓글이 없습니다.")
+    FAIL_GETCOMMENT(400, "등록된 댓글이 없습니다."),
     CANNOT_EDIT(400, "탈퇴한 회원의 권한을 변경할 수 없습니다");
 
     private int status;
