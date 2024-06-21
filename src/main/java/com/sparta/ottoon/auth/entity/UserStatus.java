@@ -11,7 +11,8 @@ public enum UserStatus {
    ACTIVE(Authority.ACTIVE),
    WITHDRAW(Authority.WITHDRAW),
    BLOCK(Authority.BLOCK),
-   ADMIN(Authority.ADMIN);
+   ADMIN(Authority.ADMIN),
+   DELETE(Authority.DELETE);
 
    final private String status;
 
@@ -24,10 +25,11 @@ public enum UserStatus {
    }
 
    public static class Authority {
-      public static final String ACTIVE = "ROLE_ACTIVE";
-      public static final String WITHDRAW = "ROLE_WITHDRAW";
-      public static final String BLOCK = "ROLE_BLOCK";
-      public static final String ADMIN = "ROLE_ADMIN";
+      public static final String ACTIVE = "ACTIVE";
+      public static final String WITHDRAW = "WITHDRAW";
+      public static final String BLOCK = "BLOCK";
+      public static final String ADMIN = "ADMIN";
+      public static final String DELETE = "DELETE";
    }
 
    @JsonCreator

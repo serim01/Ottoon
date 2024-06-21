@@ -1,4 +1,4 @@
-package com.sparta.ottoon.backoffice;
+package com.sparta.ottoon.common.customvalidation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

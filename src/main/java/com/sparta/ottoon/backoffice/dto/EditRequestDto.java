@@ -1,7 +1,7 @@
-package com.sparta.ottoon.backoffice;
+package com.sparta.ottoon.backoffice.dto;
 
 import com.sparta.ottoon.auth.entity.UserStatus;
-import jakarta.validation.constraints.NotNull;
+import com.sparta.ottoon.common.customvalidation.Enum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
