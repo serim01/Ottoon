@@ -4,6 +4,7 @@ import com.sparta.ottoon.auth.entity.UserStatus;
 import com.sparta.ottoon.backoffice.dto.EditRequestDto;
 import com.sparta.ottoon.backoffice.service.BackOfficeService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -37,9 +38,8 @@ public class BackOfficeController {
     @Operation(summary = "권한 수정", description = "특정 회원 권한 수정 기능입니다.")
     @PutMapping("/users/{username}/edit")
     public ResponseEntity<?> editUserRole(@PathVariable String username,
-                                          @RequestBody EditRequestDto editRequestDto) {
+                                          @RequestBody @Valid EditRequestDto editRequestDto) {
         return backOfficeService.editUserRole(username, editRequestDto);
-
     }
 
     /*

@@ -42,7 +42,6 @@ public class BackOfficeService {
                 case "DELETE" ->{user.setStatus(UserStatus.DELETE);
                     userRepository.delete(user);}
                 default -> throw new CustomException(ErrorCode.NOT_ENUM_VALUE);
-
             }
         } else {
             switch (editRequestDto.getUserStatus()) {
