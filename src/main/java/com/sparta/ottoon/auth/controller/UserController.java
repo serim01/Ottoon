@@ -71,6 +71,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 하였습니다.");
     }
 
+    /**
+     * kakao 소셜 로그인
+     * @param code
+     * @param response
+     * @return
+     * @throws JsonProcessingException
+     */
     @GetMapping("/kakao")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = socialService.kakaoLogin(code);

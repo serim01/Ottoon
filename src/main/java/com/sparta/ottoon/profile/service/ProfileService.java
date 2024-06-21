@@ -81,7 +81,7 @@ public class ProfileService {
     }
 
     //본인 프로필이나 관리자권한인지 확인
-    private void validateUserPermissions(User user, String userName){
+    public void validateUserPermissions(User user, String userName){
         User updateUser = findByUsername(userName);
         if(!user.equals(updateUser) && !updateUser.getStatus().equals(UserStatus.ADMIN)){
             throw new CustomException(ErrorCode.USER_FORBIDDEN);

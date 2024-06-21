@@ -35,6 +35,7 @@ public class UserService {
     @Transactional
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
+        String nickname = requestDto.getNickname();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String email = requestDto.getEmail();
 
@@ -58,7 +59,7 @@ public class UserService {
         }
 
         // 회원가입한 user DB에 저장
-        User saveUser = userRepository.save(new User(username, password, email, status));
+        User saveUser = userRepository.save(new User(username, nickname, password, email, status));
 
         // 비밀번호 로그 DB에 저장
         passwordLogRepository.save(new PasswordLog(password, saveUser));

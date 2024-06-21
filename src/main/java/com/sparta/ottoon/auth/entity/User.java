@@ -5,6 +5,7 @@ import com.sparta.ottoon.profile.dto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 @Entity
 @Table(name="user")
 @Getter
+@Setter
 @NoArgsConstructor
 public class User extends Timestamped implements UserDetails {
     @Id
@@ -36,8 +38,9 @@ public class User extends Timestamped implements UserDetails {
     private String refreshToken;
     private Long kakaoId;
 
-    public User(String username, String password, String email, UserStatus status) {
+    public User(String username, String nickname, String password, String email, UserStatus status) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.status = status;
