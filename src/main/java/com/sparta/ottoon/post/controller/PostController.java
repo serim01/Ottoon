@@ -3,6 +3,8 @@ package com.sparta.ottoon.post.controller;
 import com.sparta.ottoon.post.dto.PostRequestDto;
 import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.post.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Post API", description = "Post API 입니다")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -22,6 +25,7 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 등록
+    @Operation(summary = "createPost", description = "게시글 생성 기능입니다.")
     @PostMapping("/posts")
     public ResponseEntity<PostResponseDto> create(@Valid @RequestBody PostRequestDto postRequestDto) {
         PostResponseDto post = postService.save(postRequestDto);
@@ -29,6 +33,7 @@ public class PostController {
     }
 
     // 게시글 전체 조회
+    @Operation(summary = "getPostAll", description = "게시글 전체 조회 기능입니다.")
     @GetMapping("/posts")
     public ResponseEntity<Map<String, Object>> getAll() {
         List<PostResponseDto> postContents = postService.getAll();
@@ -45,18 +50,21 @@ public class PostController {
     }
 
     // 게시글 부분 조회
+    @Operation(summary = "getPostSelect", description = "게시글 부분 조회 기능입니다.")
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostResponseDto> findById(@PathVariable(name = "postId") long postId) {
         return ResponseEntity.ok().body(postService.findById(postId));
     }
 
     // 게시글 수정
+    @Operation(summary = "updatePost", description = "게시글 수정 기능입니다.")
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostResponseDto> update(@PathVariable(name = "postId") long postId, @Valid @RequestBody PostRequestDto postRequestDto) {
         return ResponseEntity.ok().body(postService.update(postId, postRequestDto));
     }
 
     //게시글 삭제
+    @Operation(summary = "deletePost", description = "게시글 삭제 기능입니다.")
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable(name = "postId") long postId) {
         postService.delete(postId);
