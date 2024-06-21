@@ -34,12 +34,23 @@ public class User extends Timestamped implements UserDetails {
     private UserStatus status;
     @Column
     private String refreshToken;
+    private Long kakaoId;
 
     public User(String username, String password, String email, UserStatus status) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.status = status;
+    }
+
+    public User(String username, String nickname, String encodedPassword, String email, UserStatus userStatus, Long kakaoId, String refresh) {
+        this.username = username;
+        this.nickname = nickname;
+        this.password = encodedPassword;
+        this.email = email;
+        this.status = userStatus;
+        this.refreshToken = refresh;
+        this.kakaoId = kakaoId;
     }
 
     @Override
@@ -62,5 +73,10 @@ public class User extends Timestamped implements UserDetails {
 
     public void clearRefreshToken() {
         this.refreshToken = null;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
