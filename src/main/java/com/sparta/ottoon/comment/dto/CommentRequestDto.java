@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommnetRequestDto {
-    private Long postId; //댓글이 생성될 게시글
+public class CommentRequestDto {
     private String comment; //댓글 내용
 }

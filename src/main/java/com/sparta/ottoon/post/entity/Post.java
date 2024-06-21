@@ -3,8 +3,10 @@ package com.sparta.ottoon.post.entity;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.common.Timestamped;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "posts")
 public class Post extends Timestamped {
     @Id

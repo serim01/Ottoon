@@ -14,7 +14,10 @@ public enum ErrorCode {
     INCORRECT_PASSWORD(400, "입력하신 비밀번호가 일치하지 않습니다."),
     DUPLICATE_PASSWORD(400, "기존 비밀번호와 동일한 비밀번호입니다."),
     LAST3_PASSWORD(400, "최근 사용한 세 개의 비밀번호와 다르게 설정해야 합니다."),
-    USER_FORBIDDEN(403, "본인 프로필만 수정이 가능합니다.");
+    USER_FORBIDDEN(403, "본인 프로필만 수정이 가능합니다."),
+    FAIL_COMMENT(400, "댓글 내용을 입력하지 않았습니다"),
+    POST_NOT_FOUND(400, "등록된 게시글이 없습니다."),
+    FAIL_GETCOMMENT(400, "등록된 댓글이 없습니다.");
 
     private int status;
     private String msg;
