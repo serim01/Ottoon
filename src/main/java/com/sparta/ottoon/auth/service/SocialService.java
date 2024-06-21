@@ -37,13 +37,26 @@ public class SocialService {
     private String client_id;
 
     public String kakaoLogin(String code) throws JsonProcessingException {
+        // kakao로부터 카카오에 접속할 수 있는 accessToken을 받아온다.
         String accessToken = getToken(code);
+
+        // 카카오 유저 정보 가져오기
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
+
+        // 기존에 있는 회원이 아니라면 등록 시켜주기
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+
+        // 우리 사이트에 접속할 수 있는 토큰 발급
         String createToken = jwtUtil.createToken(kakaoUser.getUsername(), JwtUtil.accessTokenExpiration);
         return createToken;
     }
 
+    /**
+     * 카카오에 접근할 수 있는 액세스 토큰 받아오기
+     * @param code
+     * @return
+     * @throws JsonProcessingException
+     */
     private String getToken(String code) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
@@ -64,6 +77,7 @@ public class SocialService {
         body.add("redirect_uri", "http://localhost:8080/api/auth/kakao");
         body.add("code", code);
 
+        // 카카오에 보낼 데이터
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
@@ -71,11 +85,18 @@ public class SocialService {
 
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
+        // 카카오에서 json 형태로 받아온 것을 읽는디.
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
 
-        return jsonNode.get("access_token").asText();
+        return jsonNode.get("access_token").asText(); // 토큰 가져오기
     }
 
+    /**
+     * 카카오로부터 받은 액세스 토큰으로 카카오 유저 정보 가져오기
+     * @param accessToken
+     * @return
+     * @throws JsonProcessingException
+     */
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
@@ -103,17 +124,22 @@ public class SocialService {
         return new KakaoUserInfoDto(id, nickname, email);
     }
 
+    /**
+     * 필요할 경우 DB에 유저를 등록
+     * @param kakaoUserInfo
+     * @return
+     */
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 
-        if (kakaoUser == null) {
+        if (kakaoUser == null) { // 등록되어 있는 카카오 유저가 없다면
             String kakaoEmail = kakaoUserInfo.getEmail();
             User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailUser != null) {
+            if (sameEmailUser != null) { // 같은 이메일을 가진 유저가 없다면
                 kakaoUser = sameEmailUser;
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
-            } else {
+            } else { // DB에 새로운 유저를 등록해준다.
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
 

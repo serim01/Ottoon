@@ -1,7 +1,6 @@
 package com.sparta.ottoon.comment.service;
 
 import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.auth.entity.UserStatus;
 import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.comment.dto.CommentRequestDto;
@@ -10,12 +9,10 @@ import com.sparta.ottoon.comment.entity.Comment;
 import com.sparta.ottoon.comment.repository.CommentRepository;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
-import com.sparta.ottoon.common.exception.GlobalExceptionHandler;
 import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.repository.PostRepository;
 import com.sparta.ottoon.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +25,6 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final ProfileService profileService;
-    private JwtUtil jwtUtil;
 
     public CommentResponseDto createComment(Long postId, CommentRequestDto commentRequestDto, String username) {
         // user 찾기
@@ -69,7 +65,7 @@ public class CommentService {
         User user = userRepository.findByUsername(username).orElseThrow(()->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
         // 수정할 comment 찾기
-        Comment comment = commentRepository.findByCommentIdAndPostIdAndUserId(commentId,postId,user.getId()).orElseThrow(()->
+        Comment comment = commentRepository.findByIdAndPostIdAndUserId(commentId,postId,user.getId()).orElseThrow(()->
                 new CustomException(ErrorCode.FAIL_COMMENT));
         // 찾은 comment update
         comment.updateComment(commentRequestDto.getComment());
