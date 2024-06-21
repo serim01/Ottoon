@@ -1,14 +1,21 @@
 package com.sparta.ottoon.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.ottoon.auth.dto.LoginRequestDto;
 import com.sparta.ottoon.auth.dto.SignupRequestDto;
+import com.sparta.ottoon.auth.jwt.JwtUtil;
+import com.sparta.ottoon.auth.service.SocialService;
 import com.sparta.ottoon.auth.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +28,7 @@ import java.util.List;
 public class UserController {
 
     final private UserService userService;
+    final private SocialService socialService;
 
     /**
      * 회원가입 API
@@ -58,8 +66,16 @@ public class UserController {
      * @return
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@AuthenticationPrincipal User userDetails) {
+    public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetails userDetails) {
         userService.logout(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 하였습니다.");
+    }
+
+    @GetMapping("/kakao")
+    public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = socialService.kakaoLogin(code);
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token); // response header에 access token 넣기
+        return ResponseEntity.status(HttpStatus.OK).body("카카오 로그인 하였습니다.");
     }
 }
