@@ -4,6 +4,7 @@ import com.sparta.ottoon.auth.filter.JwtAuthenticationFilter;
 import com.sparta.ottoon.auth.filter.JwtAuthorizationFilter;
 import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.repository.UserRepository;
+import com.sparta.ottoon.auth.service.SocialService;
 import com.sparta.ottoon.auth.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
