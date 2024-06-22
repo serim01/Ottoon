@@ -1,14 +1,14 @@
 package com.sparta.ottoon.post.service;
 
-import com.sparta.ottoon.post.dto.PostRequestDto;
-import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.auth.entity.UserStatus;
-import com.sparta.ottoon.post.repository.PostRepository;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
+import com.sparta.ottoon.post.dto.PostRequestDto;
+import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.post.entity.Post;
+import com.sparta.ottoon.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,17 +33,21 @@ public class PostService {
         Post post = postRequestDto.toEntity();
         post.setUser(user);
         post = postRepository.save(post);
+
         return PostResponseDto.toDto("게시글 등록 완료", 200, post);
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto findById(long postId){
         Post post = findPostById(postId);
+
         return PostResponseDto.toDto("부분 게시글 조회 완료", 200, post);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PostResponseDto> getAll(){
         List<Post> list = postRepository.findAllByOrderByCreatedAtDesc();
+
         return list
                 .stream()
                 .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
@@ -55,24 +59,30 @@ public class PostService {
     public PostResponseDto update(long postId, PostRequestDto postRequestDto){
         Post post = findPostById(postId);
         Long logInUserId = getLogInUserId();
-        User user = getUserById(postId);
+        User user = getUserById(logInUserId);
+
         // 본인 계정 혹은 관리자 계정이면 게시글 수정 가능
         if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)){
-            //if (logInUserId.equals(post.getUser().getId())){
             post.update(postRequestDto.getContents());
+
             return PostResponseDto.toDto("게시글 수정 완료", 200, post);
         } else {
+
             throw new CustomException(ErrorCode.BAD_AUTH_PUT);
+
         }
     }
 
     @Transactional
-    public PostResponseDto delete(long postId){
+    public void delete(long postId){
         Post post = findPostById(postId);
         Long logInUserId = getLogInUserId();
-        if (logInUserId.equals(post.getUser().getId())) {
+        User user = getUserById(logInUserId);
+
+        // 본인 계정 혹은 관리자 계정이면 게시글 삭제 가능
+        if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
             postRepository.delete(post);
-            return PostResponseDto.toDeleteResponse("게시글 삭제 완료", 200);
+            PostResponseDto.toDeleteResponse("게시글 삭제 완료", 200);
         } else {
             throw new CustomException(ErrorCode.BAD_AUTH_DELETE);
         }
