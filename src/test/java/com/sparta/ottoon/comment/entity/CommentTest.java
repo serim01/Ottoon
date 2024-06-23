@@ -1,7 +1,5 @@
 package com.sparta.ottoon.comment.entity;
 
-import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.post.entity.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,19 +10,15 @@ class CommentTest {
     @DisplayName("updateComment() 테스트")
     void test1() {
         // Given
-        User user = new User();
-        Post post = new Post();
-        Comment comment = new Comment.CommentBuilder()
+        Comment comment = Comment.builder()
                 .comment("this is test comment")
-                .user(user)
-                .post(post)
                 .build();
+        String updateString = "update!!!!";
 
         // When
-        String updateComment = "update!!!!!";
-        comment.updateComment(updateComment);
+        comment.updateComment(updateString);
 
         // Then
-        assertEquals(comment.getComment(), updateComment);
+        assertEquals(updateString, comment.getComment());
     }
 }
