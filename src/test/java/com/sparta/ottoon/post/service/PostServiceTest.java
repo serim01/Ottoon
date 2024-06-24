@@ -80,8 +80,10 @@ class PostServiceTest extends OttoonApplicationTests {
         @DisplayName("게시물 전체 조회")
         @Test
         void test1() {
+            //given
+            int page = 0;
             // when
-            List<PostResponseDto> responseDto = PostService.getAll(1);
+            List<PostResponseDto> responseDto = PostService.getAll(page);
             List<PostResponseDto> sortedPosts = posts.stream()
                     .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
                     .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
