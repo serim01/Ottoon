@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "likes")
+@Table(name = "like")
 @NoArgsConstructor
 public class Like extends Timestamped {
     @Id

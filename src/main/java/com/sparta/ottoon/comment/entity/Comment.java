@@ -7,11 +7,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Table(name = "comments")
+@Table(name = "comment")
 @NoArgsConstructor
 public class Comment extends Timestamped {
     @Id
