@@ -2,11 +2,49 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.0'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'jacoco'
 }
 
 group = 'com.sparta'
 version = '0.0.1-SNAPSHOT'
 
+jacoco {
+    toolVersion = '0.8.7'
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it,
+                        includes: [
+                                '**/auth/dto/**',
+                                '**/auth/entity/User.class',
+                                '**/auth/service/UserService.class',
+                                '**/auth/controller/**',
+                                '**/comment/entity/**',
+                                '**/comment/service/**',
+                                '**/comment/controller/**',
+                                '**/post/controller/**',
+                                '**/post/entity/**',
+                                '**/post/service/**'
+                        ])
+            }))
+        }
+
+        xml.destination file("${buildDir}/jacoco/index.xml")
+        html.destination file("${buildDir}/jacoco/index.html")
+    }
+}
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -24,6 +62,9 @@ repositories {
 }
 
 dependencies {
+    // Fixture Monkey
+    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.20'
+
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -41,8 +82,20 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // swagger 의존성 추가
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    // fixturemonkey 의존성 추가
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.6.8")
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+jacocoTestReport {
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+        csv.required.set(false)
+
+        // 리포트 타입마다 리포트 저장 경로를 설정할 수 있습니다.
+        html.outputLocation.set(layout.buildDirectory.dir("jacoco/jacocoHtml"))
+    }
 }

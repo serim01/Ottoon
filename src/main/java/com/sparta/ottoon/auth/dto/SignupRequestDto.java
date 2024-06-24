@@ -3,6 +3,7 @@ package com.sparta.ottoon.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
 public class SignupRequestDto {
     @NotBlank
     @Pattern(regexp = "(?=.*[a-z])(?=.*[0-9]).{4,10}",

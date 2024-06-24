@@ -38,11 +38,13 @@ public class BackOfficeService {
 
         if (!user.getStatus().equals(UserStatus.WITHDRAW)) {
             switch (editRequestDto.getUserStatus()) {
-                case "ACTIVE" -> user.setStatus(UserStatus.ACTIVE);
-                case "ADMIN" -> user.setStatus(UserStatus.ADMIN);
-                case "BLOCK" -> user.setStatus(UserStatus.BLOCK);
-                case "DELETE" ->{user.setStatus(UserStatus.DELETE);
-                    userRepository.delete(user);}
+                case "ACTIVE" -> user.updateStatus(UserStatus.ACTIVE);
+                case "ADMIN" -> user.updateStatus(UserStatus.ADMIN);
+                case "BLOCK" -> user.updateStatus(UserStatus.BLOCK);
+                case "DELETE" -> {
+                    user.updateStatus(UserStatus.DELETE);
+                    userRepository.delete(user);
+                }
                 default -> throw new CustomException(ErrorCode.NOT_ENUM_VALUE);
             }
         } else {
@@ -61,16 +63,9 @@ public class BackOfficeService {
 
     @Transactional
     public ResponseEntity<String> noticePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(ErrorCode.FAIL_FIND_POST));
-        if (post.getPostStatus().equals(PostStatus.NOTICE)) {
-            post.setPostStatus(PostStatus.GENERAL);
-            post.setTop(true);
-            return ResponseEntity.ok("해당 게시물이 일반 게시물로 변경되었습니다.");
-        }
-        post.setPostStatus(PostStatus.NOTICE);
-        post.setTop(false);
-        return ResponseEntity.ok("해당 게시물이 공지 게시물로 변경되었습니다.");
-
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.FAIL_FIND_POST));
+        post.noticed();
+        return ResponseEntity.ok("해당 게시물이 " +post.getPostStatus().getStatus() + " 게시물로 변경되었습니다.");
     }
 
 

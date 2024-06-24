@@ -1,14 +1,14 @@
 package com.sparta.ottoon.post.service;
 
+import com.sparta.ottoon.post.dto.PostRequestDto;
+import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.auth.entity.UserStatus;
+import com.sparta.ottoon.post.repository.PostRepository;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
-import com.sparta.ottoon.post.dto.PostRequestDto;
-import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.post.entity.Post;
-import com.sparta.ottoon.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +35,7 @@ public class PostService {
         Long logInUserId = getLogInUserId();
         User user = getUserById(logInUserId);
         Post post = postRequestDto.toEntity();
-        post.setUser(user);
+        post.updateUser(user);
         post = postRepository.save(post);
 
         return PostResponseDto.toDto("게시글 등록 완료", 200, post);
@@ -49,19 +49,16 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-//    public List<PostResponseDto> getAll(){
+
     public List<PostResponseDto> getAll(int page){
 
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(page, 5, sort);
         Page<PostResponseDto> postPage = postRepository.findAll(pageable).map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post));
 
-//        List<Post> list = postRepository.findAllByOrderByCreatedAtDesc();
 
         return postPage
                 .stream()
-//                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
-//                .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
                 .toList();
     }
 
