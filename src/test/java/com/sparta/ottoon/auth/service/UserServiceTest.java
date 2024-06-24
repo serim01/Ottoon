@@ -183,7 +183,7 @@ class UserServiceTest {
     class logoutTest {
 
         @Test
-        @DisplayName("로그아웃")
+        @DisplayName("올바른 입력")
         void test1() {
             //given
             String username = testUser.getUsername();
@@ -201,7 +201,7 @@ class UserServiceTest {
         }
 
         @Test
-        @DisplayName("로그아웃 : 잘못된 유저")
+        @DisplayName("잘못된 유저")
         void test2() {
             //given
             String username = testUser.getUsername();
