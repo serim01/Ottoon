@@ -29,7 +29,7 @@ jacocoTestReport {
                         includes: [
                                 '**/auth/dto/**',
                                 '**/auth/entity/User.class',
-                                '**/auth/service/**',
+                                '**/auth/service/UserService.class',
                                 '**/auth/controller/**',
                                 '**/comment/entity/**',
                                 '**/comment/service/**',
