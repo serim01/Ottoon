@@ -1,6 +1,5 @@
 package com.sparta.ottoon.comment.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.ottoon.auth.config.SecurityConfig;
 import com.sparta.ottoon.auth.entity.User;

@@ -19,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     final private UserRepository userRepository;
@@ -32,7 +33,6 @@ public class UserService {
      * 회원가입
      * @param requestDto
      */
-    @Transactional
     public String signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String nickname = requestDto.getNickname();
@@ -71,7 +71,6 @@ public class UserService {
      * refresh token을 없앰으로써 로그아웃
      * @param username
      */
-    @Transactional
     public String logout(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
