@@ -55,7 +55,7 @@ public class PostService {
     public PostResponseDto update(long postId, PostRequestDto postRequestDto){
         Post post = findPostById(postId);
         Long logInUserId = getLogInUserId();
-        User user = getUserById(postId);
+        User user = getUserById(logInUserId);
         // 본인 계정 혹은 관리자 계정이면 게시글 수정 가능
         if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)){
             //if (logInUserId.equals(post.getUser().getId())){
