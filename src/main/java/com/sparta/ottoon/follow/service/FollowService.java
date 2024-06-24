@@ -1,7 +1,6 @@
 package com.sparta.ottoon.follow.service;
 
 import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.auth.service.UserService;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
@@ -22,6 +21,7 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserService userService;
 
+    @Transactional
     public ProfileResponseDto followUser(long followId, User user) {
 
         User followUser = userService.findById(followId);
@@ -36,19 +36,19 @@ public class FollowService {
     }
 
     @Transactional
-    public ProfileResponseDto followCancle(long followId, User user) {
+    public ProfileResponseDto followCancel(long followId, User user) {
 
         User followUser = userService.findById(followId);
-        Follow cancleFollow = followRepository.findByFollowUserAndFollowUserId(followUser, user.getId()).orElseThrow(() ->
+        Follow cancelFollow = followRepository.findByFollowUserAndUserId(followUser, user.getId()).orElseThrow(() ->
                 new CustomException(ErrorCode.FAIL_FIND_USER));
 
-        if (cancleFollow.isFollow()) {
-            cancleFollow.changeFollow(false);
+        if (cancelFollow.isFollow()) {
+            cancelFollow.changeFollow(false);
         } else {
             throw new CustomException(ErrorCode.NOT_FOLLOW);
         }
 
-        return new ProfileResponseDto(cancleFollow.getFollowUser());
+        return new ProfileResponseDto(cancelFollow.getFollowUser());
     }
 
     public List<Follow> getFollowList(long userId) {
@@ -58,7 +58,7 @@ public class FollowService {
     @Transactional
     public boolean isAleadyFollow(long followId, User user) {
         User followUser = userService.findById(followId);
-        Optional<Follow> curFollow = followRepository.findByFollowUserAndFollowUserId(followUser, user.getId());
+        Optional<Follow> curFollow = followRepository.findByFollowUserAndUserId(followUser, user.getId());
         if (curFollow.isPresent()) {
             if (curFollow.get().isFollow()) {
                 throw new CustomException(ErrorCode.BAD_FOLLOW);

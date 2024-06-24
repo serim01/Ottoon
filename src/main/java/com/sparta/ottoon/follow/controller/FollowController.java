@@ -34,7 +34,7 @@ public class FollowController {
     @PutMapping("/follows/users/{userId}")
     public ResponseEntity<FollowResponseDto<Void>> followCancel(@PathVariable long userId,
                                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
-        ProfileResponseDto profileResponseDto = followService.followCancle(userId, userDetails.getUser());
+        ProfileResponseDto profileResponseDto = followService.followCancel(userId, userDetails.getUser());
         return ResponseEntity.ok().body(new FollowResponseDto<>(HttpStatus.OK.value(),
                 profileResponseDto.getUsername() + "님의 팔로우를 취소 했습니다.",
                 null));

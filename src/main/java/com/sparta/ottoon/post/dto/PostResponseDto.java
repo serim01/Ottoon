@@ -6,11 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
     private String message;
@@ -22,6 +24,10 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt;
+
+    public PostResponseDto(Post post) {
+        new PostResponseDto("", 0, post.getId(), post.getContents(), post.getCreatedAt(), post.getModifiedAt());
+    }
 
     //게시글 등록, 수정, 조회
     public static PostResponseDto toDto(String message, int statusCode, Post post) {

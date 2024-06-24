@@ -49,19 +49,19 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAll(){
-//    public List<PostResponseDto> getAll(int page){
-//
-//        Sort sort = Sort.by(Sort.Direction.DESC, "id");
-//        Pageable pageable = PageRequest.of(page, 5, sort);
-//        Page<PostResponseDto> postPage = PostRepository.findAll(pageable).map(PostResponseDto::new);
+//    public List<PostResponseDto> getAll(){
+    public List<PostResponseDto> getAll(int page){
 
-        List<Post> list = postRepository.findAllByOrderByCreatedAtDesc();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, 5, sort);
+        Page<PostResponseDto> postPage = postRepository.findAll(pageable).map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post));
 
-        return list
+//        List<Post> list = postRepository.findAllByOrderByCreatedAtDesc();
+
+        return postPage
                 .stream()
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
-                .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
+//                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+//                .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
                 .toList();
     }
 
