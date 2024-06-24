@@ -8,6 +8,7 @@ import com.sparta.ottoon.auth.filter.JwtAuthenticationFilter;
 import com.sparta.ottoon.auth.filter.JwtAuthorizationFilter;
 import com.sparta.ottoon.comment.dto.CommentRequestDto;
 import com.sparta.ottoon.comment.service.CommentService;
+import com.sparta.ottoon.mock.MockSpringSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
