@@ -31,7 +31,7 @@ public class PostService {
         Long logInUserId = getLogInUserId();
         User user = getUserById(logInUserId);
         Post post = postRequestDto.toEntity();
-        post.setUser(user);
+        post.updateUser(user);
         post = postRepository.save(post);
         return PostResponseDto.toDto("게시글 등록 완료", 200, post);
     }
