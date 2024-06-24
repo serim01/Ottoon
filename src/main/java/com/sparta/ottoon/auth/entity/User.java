@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 @Getter
 @NoArgsConstructor
 public class User extends Timestamped implements UserDetails {

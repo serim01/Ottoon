@@ -64,9 +64,6 @@ class PostControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private UserDetailsService userDetailsService;
-
-    @MockBean
     PostService postService;
 
     @MockBean
@@ -129,7 +126,7 @@ class PostControllerTest {
 
         PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
                 .giveMeBuilder(PostRequestDto.class)
-                .set("content", Arbitraries.strings().ofMinLength(1))
+                .set("contents", Arbitraries.strings().ofMinLength(1))
                 .sample();
 
         String requestJson = objectMapper.writeValueAsString(requestDto);
