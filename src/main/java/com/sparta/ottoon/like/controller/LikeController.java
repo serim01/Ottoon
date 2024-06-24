@@ -9,6 +9,7 @@ import com.sparta.ottoon.like.service.LikeService;
 import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.repository.PostRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,29 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/likes")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class LikeController {
 
     private final LikeService likeService;
-    private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
-    private final UserService userService;
-
-    public LikeController(LikeService likeService, PostRepository postRepository, CommentRepository commentRepository, UserService userService) {
-        this.likeService = likeService;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-        this.userService = userService;
-    }
 
     @Operation(summary = "createLikePost", description = "게시글 좋아요 생성 기능")
-    @PostMapping("/post/{postId}")
+    @PostMapping("/post/{postId}/like")
     public ResponseEntity<String> likeOrUnlikePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(likeService.postlikeOrUnlike(userDetails.getUsername(), postId));
     }
 
     @Operation(summary = "createLikeComment", description = "댓글 좋아요 생성 기능")
-    @PostMapping("/comment/{commentId}")
+    @PostMapping("/post/[]/comment/{commentId}")
     public ResponseEntity<String> likeOrUnlikeComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long commentId) {
         return ResponseEntity.status(HttpStatus.OK).body(likeService.commentlikeOrUnlike(userDetails.getUsername() , commentId));
     }
