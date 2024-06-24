@@ -27,7 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("Ottoon")
 class UserServiceTest {
 
     @Mock
@@ -61,7 +60,7 @@ class UserServiceTest {
         @Test
         @DisplayName("올바른 입력")
         void test1() {
-            //given
+
             String username = "requestUsername";
             String nickname = "requestNickname";
             String password = "requestPassword";
@@ -78,11 +77,8 @@ class UserServiceTest {
                     admin
             );
 
-            //when
-
             userService.signup(signupRequestDto);
 
-            //then
             verify(userRepository, times(1)).save(any(User.class));
             verify(passwordLogRepository, times(1)).save(any(PasswordLog.class));
         }
@@ -90,7 +86,7 @@ class UserServiceTest {
         @Test
         @DisplayName("중복된 이름")
         void test3() {
-            //given
+
             String username = "requestUsername";
             String nickname = "requestNickname";
             String password = "requestPassword";
@@ -108,19 +104,16 @@ class UserServiceTest {
             );
             given(userRepository.findByUsername(anyString())).willReturn(Optional.of(testUser));
 
-            //when
-
             Exception exception = assertThrows(CustomException.class,
                     () -> userService.signup(signupRequestDto));
 
-            //then
             assertEquals("중복된 사용자가 존재합니다.", exception.getMessage());
         }
 
         @Test
         @DisplayName("중복된 이메일")
         void test2() {
-            //given
+
             String username = "requestUsername";
             String nickname = "requestNickname";
             String password = "requestPassword";
@@ -138,12 +131,9 @@ class UserServiceTest {
             );
             given(userRepository.findByEmail(anyString())).willReturn(Optional.of(testUser));
 
-            //when
-
             Exception exception = assertThrows(CustomException.class,
                     () -> userService.signup(signupRequestDto));
 
-            //then
             assertEquals("중복된 이메일이 존재합니다.", exception.getMessage());
         }
 
@@ -151,7 +141,7 @@ class UserServiceTest {
         @Test
         @DisplayName("잘못된 어드민 토큰")
         void test4() {
-            //given
+
             String username = "requestUsername";
             String nickname = "requestNickname";
             String password = "requestPassword";
@@ -168,12 +158,9 @@ class UserServiceTest {
                     admin
             );
 
-            //when
-
             Exception exception = assertThrows(CustomException.class,
                     () -> userService.signup(signupRequestDto));
 
-            //then
             assertEquals("관리자 암호가 일치하지 않습니다.", exception.getMessage());
         }
     }

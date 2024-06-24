@@ -23,7 +23,7 @@ class SignupRequestDtoTest {
     @Test
     @DisplayName("SignupRequestDto 생성 테스트 : 올바른 입력")
     void test1() {
-        //given
+
         String username = "test1234";
         String nickname = "test";
         String email = "test@test.test";
@@ -38,11 +38,8 @@ class SignupRequestDtoTest {
                 adminToken,
                 admin);
 
-        //when
 
         Set<ConstraintViolation<SignupRequestDto>> violations = validatorInjected.validate(signupRequestDto);
-
-        //then
 
         assertThat(violations).isEmpty();
 
@@ -51,7 +48,6 @@ class SignupRequestDtoTest {
     @Test
     @DisplayName("SignupRequestDto 생성 테스트 : username 규칙 위반")
     void test2() {
-        //given
         String username = "tes";
         String nickname = "test";
         String email = "test@test.test";
@@ -66,11 +62,7 @@ class SignupRequestDtoTest {
                 adminToken,
                 admin);
 
-        //when
-
         Set<ConstraintViolation<SignupRequestDto>> violations = validatorInjected.validate(signupRequestDto);
-
-        //then
 
         assertThat(violations).hasSize(1);
         assertThat(violations)
@@ -97,11 +89,7 @@ class SignupRequestDtoTest {
                 adminToken,
                 admin);
 
-        //when
-
         Set<ConstraintViolation<SignupRequestDto>> violations = validatorInjected.validate(signupRequestDto);
-
-        //then
 
         assertThat(violations).hasSize(1);
         assertThat(violations)
@@ -128,11 +116,7 @@ class SignupRequestDtoTest {
                 adminToken,
                 admin);
 
-        //when
-
         Set<ConstraintViolation<SignupRequestDto>> violations = validatorInjected.validate(signupRequestDto);
-
-        //then
 
         assertThat(violations).hasSize(1);
         assertThat(violations)
@@ -144,7 +128,7 @@ class SignupRequestDtoTest {
     @Test
     @DisplayName("SignupRequestDto 생성 테스트 :  규칙 일체 위반")
     void test5() {
-        //given
+
         String username = "tes";
         String nickname = "test";
         String email = "testtest.test";
@@ -159,11 +143,7 @@ class SignupRequestDtoTest {
                 adminToken,
                 admin);
 
-        //when
-
         Set<ConstraintViolation<SignupRequestDto>> violations = validatorInjected.validate(signupRequestDto);
-
-        //then
 
         assertThat(violations).hasSize(3);
         assertThat(violations)
