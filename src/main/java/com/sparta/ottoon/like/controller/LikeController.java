@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,25 +38,13 @@ public class LikeController {
 
     @Operation(summary = "createLikePost", description = "게시글 좋아요 생성 기능")
     @PostMapping("/post/{postId}")
-    public ResponseEntity<String> likeOrUnlikePost(@AuthenticationPrincipal User user, @PathVariable Long postId) {
-        Optional<Post> postOptional = postRepository.findById(postId);
-        if (postOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        Post post = postOptional.get();
-        likeService.likeOrUnlike(user, post, null, LikeTypeEnum.POST_TYPE);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<String> likeOrUnlikePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long postId) {
+        return ResponseEntity.status(HttpStatus.OK).body(likeService.postlikeOrUnlike(userDetails.getUsername(), postId));
     }
 
     @Operation(summary = "createLikeComment", description = "댓글 좋아요 생성 기능")
     @PostMapping("/comment/{commentId}")
-    public ResponseEntity<String> likeOrUnlikeComment(@AuthenticationPrincipal User user, @PathVariable Long commentId) {
-        Optional<Comment> commentOptional = commentRepository.findById(commentId);
-        if (commentOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        Comment comment = commentOptional.get();
-        likeService.likeOrUnlike(user, null, comment, LikeTypeEnum.COMMENT_TYPE);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<String> likeOrUnlikeComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long commentId) {
+        return ResponseEntity.status(HttpStatus.OK).body(likeService.commentlikeOrUnlike(userDetails.getUsername() , commentId));
     }
 }

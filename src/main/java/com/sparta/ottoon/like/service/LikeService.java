@@ -32,25 +32,37 @@ public class LikeService {
     }
 
     @Transactional
-    public void likeOrUnlike(User user, Post post, Comment comment, LikeTypeEnum likeType) {
-        if (likeType == LikeTypeEnum.POST_TYPE) {
-            Optional<Like> existingLike = likeRepository.findByPostAndUser(post, user);
-            if (existingLike.isPresent()) {
-                likeRepository.delete(existingLike.get());
-            } else {
-                Like like = new Like(user, post, null, likeType);
-                likeRepository.save(like);
-            }
-        } else if (likeType == LikeTypeEnum.COMMENT_TYPE) {
-            Optional<Like> existingLike = likeRepository.findByCommentAndUser(comment, user);
-            if (existingLike.isPresent()) {
-                likeRepository.delete(existingLike.get());
-            } else {
-                Like like = new Like(user, null, comment, likeType);
-                likeRepository.save(like);
-            }
+    public String postlikeOrUnlike(String username, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ErrorCode.POST_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+        if(post.getUser().getId() == user.getId()){
+            throw new CustomException(ErrorCode.FAIL_LIKESELF);
+        }
+        Optional<Like> existingLike = likeRepository.findByPostAndUser(post, user);
+        if (existingLike.isPresent()) {
+            likeRepository.delete(existingLike.get());
+            return "게시글 좋아요 삭제 완료";
         } else {
-            throw new CustomException(ErrorCode.INVALID_LIKE_TYPE);
+            Like like = new Like(user, post, null, LikeTypeEnum.POST_TYPE);
+            likeRepository.save(like);
+            return "게시물 좋아요 완료";
+        }
+    }
+    @Transactional
+    public String commentlikeOrUnlike(String username,Long commentId){
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new CustomException(ErrorCode.FAIL_GETCOMMENT));
+        User user = userRepository.findByUsername(username).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+        if(comment.getUser().getId() == user.getId()){
+            throw new CustomException(ErrorCode.FAIL_COMMENTSELF);
+        }
+        Optional<Like> existingLike = likeRepository.findByCommentAndUser(comment, user);
+        if (existingLike.isPresent()) {
+            likeRepository.delete(existingLike.get());
+            return "댓글 좋아요 삭제 완료";
+        } else {
+            Like like = new Like(user, null, comment, LikeTypeEnum.COMMENT_TYPE);
+            likeRepository.save(like);
+            return "댓글 좋아요 완료";
         }
     }
 }
