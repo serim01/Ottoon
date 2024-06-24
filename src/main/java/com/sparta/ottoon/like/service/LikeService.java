@@ -68,7 +68,7 @@ public class LikeService {
     public String getLikeComment(Long commentId){
         Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new CustomException(ErrorCode.FAIL_GETCOMMENT));
         Long likes = likeRepository.countByComment(comment);
-        return "commentid" + comment.getId() + "좋아요 :" + likes;
+        return "commentid" + comment.getId() + "\n좋아요 :" + likes;
     }
 
     public String getLikePost(Long postId){
