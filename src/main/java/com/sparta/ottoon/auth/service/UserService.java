@@ -82,4 +82,9 @@ public class UserService {
 
         return "로그아웃 하였습니다.";
     }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new CustomException(ErrorCode.FAIL_FIND_USER));
+    }
 }

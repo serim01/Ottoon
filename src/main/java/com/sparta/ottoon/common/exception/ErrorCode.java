@@ -28,7 +28,9 @@ public enum ErrorCode {
     ACCESS_DINIED(403, "접근 권한이 없습니다." ),
     FAIL_LIKESELF(400,"본인 게시글에는 좋아요를 할수없습니다." ),
     INVALID_LIKE_TYPE(400,"유요하지 않은 LIKE 타입"),
-    FAIL_COMMENTSELF(400,"본인 댓글에는 좋아요를 할수 없습니다." );
+    FAIL_COMMENTSELF(400,"본인 댓글에는 좋아요를 할수 없습니다." ),
+    NOT_FOLLOW(400, "팔로우 되어있지 않은 사용자입니다."),
+    BAD_FOLLOW(400, "이미 팔로우한 사용자입니다.");
 
     private int status;
     private String msg;
