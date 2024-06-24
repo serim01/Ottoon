@@ -24,6 +24,9 @@ repositories {
 }
 
 dependencies {
+    // Fixture Monkey
+    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.20'
+
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'

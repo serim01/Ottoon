@@ -72,7 +72,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
     @Transactional
-    public void deleteComment(Long postId, Long commentId, String username){
+    public void deleteComment(Long commentId, String username){
         // 해당 comment 찾기
         Comment comment =commentRepository.findById(commentId).orElseThrow(()->
                 new CustomException(ErrorCode.FAIL_GETCOMMENT));
