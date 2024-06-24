@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -38,5 +35,17 @@ public class LikeController {
     @PostMapping("/comment/{commentId}/like")
     public ResponseEntity<String> likeOrUnlikeComment(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long commentId) {
         return ResponseEntity.status(HttpStatus.OK).body(likeService.commentlikeOrUnlike(userDetails.getUsername() , commentId));
+    }
+
+    @Operation(summary = "getLikeComment", description = "댓글 좋아요 조회 기능")
+    @GetMapping("/comment/{commentId}/like")
+    public ResponseEntity<String> getLikeComment(@PathVariable Long commentId){
+        return ResponseEntity.status(HttpStatus.OK).body(likeService.getLikeComment(commentId));
+    }
+
+    @Operation(summary = "getLikePost", description = "게시글 좋아요 조회 기능")
+    @GetMapping("/post/{postId}/like")
+    public ResponseEntity<String> getLikePost(@PathVariable Long postId){
+        return ResponseEntity.status(HttpStatus.OK).body(likeService.getLikePost(postId));
     }
 }

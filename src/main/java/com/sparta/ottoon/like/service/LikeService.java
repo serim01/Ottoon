@@ -65,4 +65,15 @@ public class LikeService {
             return "댓글 좋아요 완료";
         }
     }
+    public String getLikeComment(Long commentId){
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new CustomException(ErrorCode.FAIL_GETCOMMENT));
+        Long likes = likeRepository.countByComment(comment);
+        return "commentid" + comment.getId() + "\n좋아요 :" + likes;
+    }
+
+    public String getLikePost(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ErrorCode.POST_NOT_FOUND));
+        Long likes = likeRepository.countByPost(post);
+        return "postId" + post.getId() + "\n좋아요 :" + likes;
+    }
 }
