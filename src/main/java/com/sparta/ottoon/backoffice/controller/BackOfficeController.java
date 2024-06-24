@@ -28,6 +28,8 @@ public class BackOfficeController {
     @Operation(summary = "전체 회원 조회", description = "사용자 전제 조회기능입니다.")
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
+
+
         List<ProfileResponseDto> response = backOfficeService.getAllUsers();
         if (response == null) {
             return ResponseEntity.ok("가입된 사용자가 없습니다.");

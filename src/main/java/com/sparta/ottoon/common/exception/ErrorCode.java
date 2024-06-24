@@ -25,6 +25,7 @@ public enum ErrorCode {
     BAD_POST_ID(400, "게시글 ID를 찾을 수 없습니다."),
     BAD_AUTH_PUT(400, "작성자만 수정할 수 있습니다."),
     BAD_AUTH_DELETE(400, "작성자만 삭제할 수 있습니다."),
+    ACCESS_DINIED(403, "접근 권한이 없습니다." ),
     FAIL_LIKESELF(400,"본인 게시글에는 좋아요를 할수없습니다." ),
     INVALID_LIKE_TYPE(400,"유요하지 않은 LIKE 타입"),
     FAIL_COMMENTSELF(400,"본인 댓글에는 좋아요를 할수 없습니다." );

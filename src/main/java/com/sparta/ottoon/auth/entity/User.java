@@ -17,7 +17,6 @@ import java.util.Collection;
 @Entity
 @Table(name="users")
 @Getter
-@Setter
 @NoArgsConstructor
 public class User extends Timestamped implements UserDetails {
     @Id
@@ -92,4 +91,9 @@ public class User extends Timestamped implements UserDetails {
         this.kakaoId = kakaoId;
         return this;
     }
+
+    public void updateStatus(UserStatus userStatus){
+        this.status =  userStatus;
+            }
+
 }

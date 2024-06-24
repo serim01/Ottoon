@@ -26,7 +26,7 @@ public class UserService {
     final private PasswordLogRepository passwordLogRepository;
     final private PasswordEncoder passwordEncoder;
 
-    @Value("${ADMIN_TOKEN}")
+    @Value("${admin.token}")
     private String ADMIN_TOKEN;
 
     /**
