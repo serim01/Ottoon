@@ -67,8 +67,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
         );
 
-        httpSecurity.addFilterAfter(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        httpSecurity.addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
