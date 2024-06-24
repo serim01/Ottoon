@@ -12,6 +12,7 @@ import com.sparta.ottoon.auth.filter.JwtAuthenticationFilter;
 import com.sparta.ottoon.auth.filter.JwtAuthorizationFilter;
 import com.sparta.ottoon.auth.service.SocialService;
 import com.sparta.ottoon.auth.service.UserService;
+import com.sparta.ottoon.mock.MockSpringSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,9 +74,6 @@ public class UserControllerTest {
     @MockBean
     private SocialService socialService;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     @Spy
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -88,14 +86,14 @@ public class UserControllerTest {
     }
 
     void mockUserSetup() {
-        // Mock 테스트 유져 생성
+
         Long id = 1L;
-        String testUsername = "test1234"; // 사용자 ID
-        String testPassword = "test1234";// 비밀번호
-        String testNickname = "test"; // "사용자 이름
-        String testEmail = "test@test.test";// 사용자 이메일
-        String testIntroduce = "It's a test"; // 한줄소개
-        UserStatus testUserStatus = UserStatus.ACTIVE; // 회원 상태코드
+        String testUsername = "test1234";
+        String testPassword = "test1234";
+        String testNickname = "test";
+        String testEmail = "test@test.test";
+        String testIntroduce = "It's a test";
+        UserStatus testUserStatus = UserStatus.ACTIVE;
         User testUser = new User(testUsername, testPassword, testNickname, testEmail, testUserStatus);
         org.springframework.security.core.userdetails.User testUserDetails = new org.springframework.security.core.userdetails.User(testUser.getUsername(), testUser.getPassword(), testUser.getAuthorities());
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
@@ -104,12 +102,12 @@ public class UserControllerTest {
     @Test
     @DisplayName("회원가입")
     void test1() throws Exception {
-        //given
-        String testUsername = "test1234"; // 사용자 ID
-        String testPassword = "test1234";// 비밀번호
-        String testNickname = "test"; // "사용자 이름
-        String testEmail = "test@test.test";// 사용자 이메일
-        UserStatus testUserStatus = UserStatus.ACTIVE; // 회원 상태코드
+
+        String testUsername = "test1234";
+        String testPassword = "test1234";
+        String testNickname = "test";
+        String testEmail = "test@test.test";
+        UserStatus testUserStatus = UserStatus.ACTIVE;
         String testAdminToken = "";
         boolean admin = false;
         SignupRequestDto signupRequestDto = new SignupRequestDto(
@@ -122,8 +120,6 @@ public class UserControllerTest {
 
         String postInfo = objectMapper.writeValueAsString(signupRequestDto);
 
-
-        //when, then
         mvc.perform(post("/api/auth/signup")
                         .content(postInfo)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,14 +132,13 @@ public class UserControllerTest {
     @Test
     @DisplayName("로그인")
     void test2() throws Exception {
-        //given
-        String testUsername = "test1234"; // 사용자 ID
-        String testPassword = "test1234";// 비밀번호
+
+        String testUsername = "test1234";
+        String testPassword = "test1234";
         LoginRequestDto loginRequestDto = new LoginRequestDto(testUsername, testPassword);
 
         String postInfo = objectMapper.writeValueAsString(loginRequestDto);
 
-        //when, then
         mvc.perform(post("/api/auth/login")
                         .content(postInfo)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,11 +151,9 @@ public class UserControllerTest {
     @Test
     @DisplayName("로그아웃")
     void test3() throws Exception {
-        //given
+
         mockUserSetup();
 
-
-        //when, then
         mvc.perform(post("/api/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -170,41 +163,6 @@ public class UserControllerTest {
                 .andDo(print());
 
     }
-
-//    @Test
-//    @DisplayName("카카오 로그인")
-//    void test4 () throws JsonProcessingException {
-//        //given
-//        MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
-//        User user = new User();
-//        user.setKakaoId(123L);
-//        user.setEmail("test@test.com");
-//        MockHttpServletResponse res = new MockHttpServletResponse();
-//        String code = "asdasdasdasdasd";
-//
-//        ResultActions actions = mvc.perform()
-//
-//        //when
-//                String accessToken = "access token";
-//        Long kakaoId = 12345L;
-//
-//        String response = String.format("{\"id\":\"%d\"}", kakaoId);
-//
-//        mockServer.expect(requestTo(MEMBER_INFO_REQUEST_URI))
-//                .andExpect(content().contentType("application/x-www-form-urlencoded"))
-//                .andExpect(method(HttpMethod.POST))
-//                .andExpect(header(AUTHORIZATION_HEADER, TOKEN_TYPE + accessToken))
-//                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-//
-//        KaKaoMemberInfoResponse memberInfoResponse = supporter.getMemberInfo(accessToken);
-//
-//        assertThat(memberInfoResponse.getId()).isEqualTo(kakaoId);
-//
-//        //then
-//
-//
-//    }
-
 
 }
 
