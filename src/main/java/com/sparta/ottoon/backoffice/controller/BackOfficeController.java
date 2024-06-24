@@ -1,4 +1,4 @@
-package com.sparta.ottoon.auth.config.controller;
+package com.sparta.ottoon.backoffice.controller;
 
 import com.sparta.ottoon.auth.entity.UserStatus;
 import com.sparta.ottoon.backoffice.dto.EditRequestDto;

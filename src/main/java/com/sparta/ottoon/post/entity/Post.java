@@ -47,8 +47,10 @@ public class Post extends Timestamped {
     public void noticed() {
         if (this.getPostStatus().equals(PostStatus.NOTICE)) {
             this.postStatus = PostStatus.GENERAL;
+            this.isTop = false;
         } else {
             this.postStatus = PostStatus.NOTICE;
+            this.isTop = true;
         }
     }
 }
