@@ -187,7 +187,7 @@ class UserServiceTest {
         void test1() {
             //given
             String username = testUser.getUsername();
-            testUser.setRefreshToken("testRefreshToken");
+            testUser.updateRefresh("testRefreshToken");
             given(userRepository.findByUsername(anyString())).willReturn(Optional.of(testUser));
 
 
