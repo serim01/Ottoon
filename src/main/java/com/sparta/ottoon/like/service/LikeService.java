@@ -45,7 +45,7 @@ public class LikeService {
         } else {
             Like like = new Like(user, post, null, LikeTypeEnum.POST_TYPE);
             likeRepository.save(like);
-            return "게시물 좋아요 완료";
+            return "게시글 좋아요 완료";
         }
     }
     @Transactional
