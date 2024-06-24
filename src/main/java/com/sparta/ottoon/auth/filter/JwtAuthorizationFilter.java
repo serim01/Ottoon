@@ -4,6 +4,7 @@ import com.sparta.ottoon.auth.entity.TokenError;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.repository.UserRepository;
+import com.sparta.ottoon.auth.service.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -88,9 +89,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * @return
      */
     private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        return new UsernamePasswordAuthenticationToken(userDetails, null, user.getAuthorities());
+        //UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
+        UserDetailsImpl userDetailsImpl = new UserDetailsImpl(user);
+        return new UsernamePasswordAuthenticationToken(userDetailsImpl, null, user.getAuthorities());
     }
 
 

@@ -79,4 +79,9 @@ public class UserService {
         user.clearRefreshToken();
         userRepository.save(user);
     }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new CustomException(ErrorCode.FAIL_FIND_USER));
+    }
 }

@@ -10,6 +10,10 @@ import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,6 +50,12 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAll(){
+//    public List<PostResponseDto> getAll(int page){
+//
+//        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+//        Pageable pageable = PageRequest.of(page, 5, sort);
+//        Page<PostResponseDto> postPage = PostRepository.findAll(pageable).map(PostResponseDto::new);
+
         List<Post> list = postRepository.findAllByOrderByCreatedAtDesc();
 
         return list
