@@ -3,6 +3,7 @@ package com.sparta.ottoon.auth.entity;
 import com.sparta.ottoon.common.Timestamped;
 import com.sparta.ottoon.profile.dto.ProfileRequestDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 @Entity
 @Table(name="user")
@@ -48,6 +48,7 @@ public class User extends Timestamped implements UserDetails {
         this.status = status;
     }
 
+    @Builder
     public User(String username, String nickname, String encodedPassword, String email, UserStatus userStatus, Long kakaoId, String refresh) {
         this.username = username;
         this.nickname = nickname;

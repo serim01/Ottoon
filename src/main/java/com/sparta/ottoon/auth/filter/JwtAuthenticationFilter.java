@@ -10,7 +10,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,11 +26,9 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
-        this.jwtUtil = jwtUtil;
+    public JwtAuthenticationFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
 
         // 이 경로로 요청이 들어올 경우 인증 필터가 동작한다.
@@ -44,7 +45,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
         try {
             // 클라이언트가 전송한 JSON 형식의 로그인 요청 데이터를 'LoginRequestDto' 객체로 매핑
             LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
@@ -71,17 +71,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = ((UserDetails) authResult.getPrincipal()).getUsername();
 
         // access token과 refresh 토큰 생성
-        String token = jwtUtil.createToken(username, JwtUtil.accessTokenExpiration);
-        String refresh = jwtUtil.createToken(username, JwtUtil.refreshTokenExpiration);
+        String token = JwtUtil.createToken(username, JwtUtil.ACCESS_TOKEN_EXPIRATION);
+        String refresh = JwtUtil.createToken(username, JwtUtil.REFRESH_TOKEN_EXPIRATION);
 
         // refresh token 저장
         saveRefreshToken(username, refresh);
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token); // response header에 access token 넣기
 
-        response.setStatus(200);
-        response.setContentType("text/plain;charset=UTF-8");
-        response.getWriter().write("로그인에 성공하였습니다.");
+        responseSetting(response, 200, "로그인에 성공하였습니다.");
     }
 
     /**
@@ -92,9 +90,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        response.setStatus(401);
-        response.setContentType("text/plain;charset=UTF-8");
-        response.getWriter().write("로그인 실패하였습니다.");
+        responseSetting(response, 401, "로그인에 실패하였습니다.");
     }
 
     /**
@@ -108,5 +104,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         );
         user.updateRefresh(refresh); // 사용자의 refresh token을 업데이트 해준다.
         userRepository.save(user);
+    }
+
+    private void responseSetting(HttpServletResponse response, int statusCode, String message) throws IOException {
+        response.setStatus(statusCode);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write(message);
+
     }
 }

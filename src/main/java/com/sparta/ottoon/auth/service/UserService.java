@@ -19,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     final private UserRepository userRepository;
@@ -32,8 +33,7 @@ public class UserService {
      * 회원가입
      * @param requestDto
      */
-    @Transactional
-    public void signup(SignupRequestDto requestDto) {
+    public String signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String nickname = requestDto.getNickname();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -63,14 +63,15 @@ public class UserService {
 
         // 비밀번호 로그 DB에 저장
         passwordLogRepository.save(new PasswordLog(password, saveUser));
+
+        return "회원가입에 성공하였습니다.";
     }
 
     /**
      * refresh token을 없앰으로써 로그아웃
      * @param username
      */
-    @Transactional
-    public void logout(String username) {
+    public String logout(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
@@ -78,5 +79,7 @@ public class UserService {
         // user의 refresh token을 없앤다.
         user.clearRefreshToken();
         userRepository.save(user);
+
+        return "로그아웃 하였습니다.";
     }
 }
