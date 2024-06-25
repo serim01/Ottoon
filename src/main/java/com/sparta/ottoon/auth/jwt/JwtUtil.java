@@ -3,11 +3,9 @@ package com.sparta.ottoon.auth.jwt;
 import com.sparta.ottoon.auth.entity.TokenError;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
@@ -16,30 +14,15 @@ import java.util.Date;
 
 // JwtUtil : - JWT 토큰을 생성하고 검증
 @Slf4j(topic = "JwtUtil")
-@Component
+@RequiredArgsConstructor
 public class JwtUtil {
-    public static final Long accessTokenExpiration = 60 * 60 * 1000L; // 60분
-    public static final Long refreshTokenExpiration = 24 * 60 * 60 * 1000L; // 1일
+    public static final Long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 60분
+    public static final Long REFRESH_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000L; // 1일
     public static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
-
-    private Key key;
-    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-    /**
-     * 빈으로 생성 후 초기화
-     */
-    @PostConstruct
-    public void init() {
-        // Base64로 인코딩된 secretKey를 decode
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-
-        // HMAC SHA 키 생성
-        key = Keys.hmacShaKeyFor(bytes);
-    }
+    private static final Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(System.getenv("JWT_SECRET_KEY")));
+    private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     /**
      * username과 만료시간 정보를 담아 토큰 생성
@@ -47,7 +30,7 @@ public class JwtUtil {
      * @param expiration
      * @return
      */
-    public String createToken(String username, long expiration) {
+    public static String createToken(String username, long expiration) {
         Date date = new Date();
 
         return BEARER_PREFIX +
@@ -64,7 +47,7 @@ public class JwtUtil {
      * @param request
      * @return
      */
-    public String getJwtTokenFromHeader(HttpServletRequest request) {
+    public static String getJwtTokenFromHeader(HttpServletRequest request) {
         // 헤더에서 'Authorization'의 값을 가져온다.
         String bearerToken = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
 
@@ -80,7 +63,7 @@ public class JwtUtil {
      * @param token
      * @return
      */
-    public TokenError validateToken(String token) {
+    public static TokenError validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return TokenError.VALID;
@@ -104,7 +87,7 @@ public class JwtUtil {
      * @param token
      * @return
      */
-    public Claims getUserInfoFromToken(String token) {
+    public static Claims getUserInfoFromToken(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {

@@ -16,18 +16,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 @Tag(name = "USER API", description = "USER API 입니다")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class UserController {
 
-    final private UserService userService;
-    final private SocialService socialService;
+    private final UserService userService;
+    private final SocialService socialService;
 
     /**
      * 회원가입 API
@@ -38,16 +35,7 @@ public class UserController {
     @Operation(summary = "signup", description = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
-        // @Valid 에러가 있는지 확인
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldError.getDefaultMessage());
-            }
-        }
-
-        userService.signup(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(requestDto));
     }
 
     /**
@@ -69,8 +57,7 @@ public class UserController {
     @Operation(summary = "logout", description = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetails userDetails) {
-        userService.logout(userDetails.getUsername());
-        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 하였습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body(userService.logout(userDetails.getUsername()));
     }
 
     /**
@@ -84,7 +71,6 @@ public class UserController {
     @GetMapping("/kakao")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = socialService.kakaoLogin(code);
-
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token); // response header에 access token 넣기
         return ResponseEntity.status(HttpStatus.OK).body("카카오 로그인 하였습니다.");
     }

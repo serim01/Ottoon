@@ -4,6 +4,7 @@ import com.sparta.ottoon.auth.entity.TokenError;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.repository.UserRepository;
+import com.sparta.ottoon.auth.service.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,7 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +30,6 @@ import java.util.Objects;
 @Slf4j(topic = "JwtAuthorizationFilter")
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
@@ -41,9 +44,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 헤더에서 jwt token을 가져온다.
-        String token = jwtUtil.getJwtTokenFromHeader(request);
-
-
+        String token = JwtUtil.getJwtTokenFromHeader(request);
 
         if (StringUtils.hasText(token)) { // token의 값이 null이나 빈칸이 아닐 경우
 
@@ -51,7 +52,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             checkTokenzAndErrorHanding(response, token);
 
             // token에서 사용자의 정보를 가져온다.
-            Claims userInfo = jwtUtil.getUserInfoFromToken(token);
+            Claims userInfo = JwtUtil.getUserInfoFromToken(token);
 
             try {
                 // username으로 인증객체 설정
@@ -88,9 +89,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * @return
      */
     private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        return new UsernamePasswordAuthenticationToken(userDetails, null, user.getAuthorities());
+        //UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
+        UserDetailsImpl userDetailsImpl = new UserDetailsImpl(user);
+        return new UsernamePasswordAuthenticationToken(userDetailsImpl, null, user.getAuthorities());
     }
 
 
@@ -101,7 +103,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * @throws IOException
      */
    private void checkTokenzAndErrorHanding(HttpServletResponse response, String token) throws IOException {
-       switch (jwtUtil.validateToken(token)) {
+       switch (JwtUtil.validateToken(token)) {
            case VALID: break;
            case EXPRIED:
                // access token이 만료되었으므로 refresh token을 기반으로 처리해준다.
@@ -124,16 +126,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     private void updateAccessToken(HttpServletResponse response, String token) throws IOException {
-        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        String username = JwtUtil.getUserInfoFromToken(token).getSubject();
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
         );
 
         String refresh = user.getRefreshToken().substring(7);
-        if (TokenError.VALID == jwtUtil.validateToken(refresh)) { // refresh token이 유효한 경우 access token을 재발급 해준다.
-            String newToken = jwtUtil.createToken(user.getUsername(), JwtUtil.accessTokenExpiration);
+        if (TokenError.VALID == JwtUtil.validateToken(refresh)) { // refresh token이 유효한 경우 access token을 재발급 해준다.
+            String newToken = JwtUtil.createToken(user.getUsername(), JwtUtil.ACCESS_TOKEN_EXPIRATION);
             response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
-        } else if (TokenError.EXPRIED == jwtUtil.validateToken(refresh)){ // refresh token이 만료되어 클라이언트로 사용자의 재로그인을 유도한다.
+        } else if (TokenError.EXPRIED == JwtUtil.validateToken(refresh)){ // refresh token이 만료되어 클라이언트로 사용자의 재로그인을 유도한다.
             response.setStatus(401);
             response.setContentType("text/plain;charset=UTF-8");
             response.getWriter().write("refresh 토큰이 만료되었습니다.");
@@ -147,7 +149,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * @param token
      */
     private void checkBlacklist(String token) {
-        String username = jwtUtil.getUserInfoFromToken(token).getSubject();
+        String username = JwtUtil.getUserInfoFromToken(token).getSubject();
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저는 없습니다.")
         );

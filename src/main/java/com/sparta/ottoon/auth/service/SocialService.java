@@ -16,6 +16,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +32,6 @@ public class SocialService {
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     @Value("${KAKAO_CLIENT_ID}")
     private String client_id;
@@ -47,7 +47,7 @@ public class SocialService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 우리 사이트에 접속할 수 있는 토큰 발급
-        String createToken = jwtUtil.createToken(kakaoUser.getUsername(), JwtUtil.accessTokenExpiration);
+        String createToken = JwtUtil.createToken(kakaoUser.getUsername(), JwtUtil.ACCESS_TOKEN_EXPIRATION);
         return createToken;
     }
 
@@ -97,7 +97,7 @@ public class SocialService {
      * @return
      * @throws JsonProcessingException
      */
-    private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    public KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
                 .path("/v2/user/me")
@@ -129,7 +129,8 @@ public class SocialService {
      * @param kakaoUserInfo
      * @return
      */
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+    @Transactional
+    protected User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 
@@ -146,7 +147,7 @@ public class SocialService {
                 String email = kakaoUserInfo.getEmail();
 
                 String username = "kakao" + kakaoId;
-                String refresh = jwtUtil.createToken(username, JwtUtil.refreshTokenExpiration);
+                String refresh = JwtUtil.createToken(username, JwtUtil.REFRESH_TOKEN_EXPIRATION);
                 kakaoUser = new User(username, kakaoUserInfo.getNickname(), encodedPassword, email, UserStatus.ACTIVE, kakaoId, refresh);
             }
             userRepository.save(kakaoUser);

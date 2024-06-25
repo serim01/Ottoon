@@ -35,8 +35,10 @@ public class PostController {
     // 게시글 전체 조회
     @Operation(summary = "getPostAll", description = "게시글 전체 조회 기능입니다.")
     @GetMapping("/posts")
-    public ResponseEntity<Map<String, Object>> getAll() {
-        List<PostResponseDto> postContents = postService.getAll();
+//    public ResponseEntity<Map<String, Object>> getAll() {
+    public ResponseEntity<Map<String, Object>> getAll(@RequestParam(value = "page", defaultValue = "1") int page) {
+//        List<PostResponseDto> postContents = postService.getAll();
+        List<PostResponseDto> postContents = postService.getAll(page - 1);
         if (postContents.isEmpty()) {
             // 게시글이 비어있는 경우
             Map<String, Object> response = new HashMap<>();

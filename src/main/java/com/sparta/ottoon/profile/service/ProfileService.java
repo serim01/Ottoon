@@ -25,6 +25,7 @@ public class ProfileService {
     private final PasswordLogRepository passwordLogRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public ProfileResponseDto getUser(String userName) {
         User user = findByUsername(userName);
         return new ProfileResponseDto(user);

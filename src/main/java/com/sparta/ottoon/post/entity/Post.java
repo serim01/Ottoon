@@ -6,10 +6,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.ResponseEntity;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "posts")
 @NoArgsConstructor
 public class Post extends Timestamped {
@@ -31,12 +31,26 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private boolean isTop;
 
-    public Post(String contents){
+    public Post(String contents) {
         this.contents = contents;
         this.postStatus = PostStatus.GENERAL;
     }
 
+    public void updateUser(User user) {
+        this.user = user;
+    }
+
     public void update(String contents) {
         this.contents = contents;
+    }
+
+    public void noticed() {
+        if (this.getPostStatus().equals(PostStatus.NOTICE)) {
+            this.postStatus = PostStatus.GENERAL;
+            this.isTop = false;
+        } else {
+            this.postStatus = PostStatus.NOTICE;
+            this.isTop = true;
+        }
     }
 }
