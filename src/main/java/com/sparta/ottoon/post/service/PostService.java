@@ -1,14 +1,14 @@
 package com.sparta.ottoon.post.service;
 
-import com.sparta.ottoon.post.dto.PostRequestDto;
-import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.auth.entity.UserStatus;
-import com.sparta.ottoon.post.repository.PostRepository;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.common.exception.CustomException;
 import com.sparta.ottoon.common.exception.ErrorCode;
+import com.sparta.ottoon.post.dto.PostRequestDto;
+import com.sparta.ottoon.post.dto.PostResponseDto;
 import com.sparta.ottoon.post.entity.Post;
+import com.sparta.ottoon.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,7 +49,6 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-
     public List<PostResponseDto> getAll(int page) {
         Sort sort = Sort.by(Sort.Direction.DESC, "isTop").and(Sort.by(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(page, 5, sort);
@@ -75,7 +74,6 @@ public class PostService {
         } else {
 
             throw new CustomException(ErrorCode.BAD_AUTH_PUT);
-
         }
     }
 
