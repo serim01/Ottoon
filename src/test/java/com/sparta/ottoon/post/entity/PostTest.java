@@ -22,10 +22,7 @@ public class PostTest {
         // given
         String content = "content";
 
-        PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                .giveMeBuilder(PostRequestDto.class)
-                .set("contents", content)
-                .sample();
+        PostRequestDto requestDto = new PostRequestDto("게시글 등록");
         // when
         post = new Post(requestDto.getContents());
 
@@ -39,10 +36,7 @@ public class PostTest {
         // given
         String content = "updateContent";
 
-        PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                .giveMeBuilder(PostRequestDto.class)
-                .set("contents", content)
-                .sample();
+        PostRequestDto requestDto = new PostRequestDto("게시글 업데이트");
         // when
         post.update(requestDto.getContents());
 

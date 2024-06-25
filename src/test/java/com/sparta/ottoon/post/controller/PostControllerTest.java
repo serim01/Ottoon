@@ -124,10 +124,7 @@ class PostControllerTest {
         // given
         Long postId = 1L;
 
-        PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                .giveMeBuilder(PostRequestDto.class)
-                .set("contents", Arbitraries.strings().ofMinLength(1))
-                .sample();
+        PostRequestDto requestDto = new PostRequestDto("게시물 수정");
 
         String requestJson = objectMapper.writeValueAsString(requestDto);
 

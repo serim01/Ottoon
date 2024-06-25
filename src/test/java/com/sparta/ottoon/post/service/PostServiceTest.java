@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("게시글 서비스 테스트")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 테스트 인스턴스의 생성 단위를 클래스로 변경합니다.
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PostServiceTest extends OttoonApplicationTests {
@@ -41,26 +42,31 @@ class PostServiceTest extends OttoonApplicationTests {
     @Autowired
     UserRepository userRepository;
 
+    @BeforeAll
+    void init(){
+        User user = userRepository.save(new User("testUsername", "testNickname", "testPassword", "test@email.com", UserStatus.ACTIVE));
+        PostRepository.save(new Post("테스트1", user));
+        PostRepository.save(new Post("테스트2", user));
+        PostRepository.save(new Post("테스트3", user));
+    }
+
     @BeforeEach
     void setUp() {
-        posts = PostRepository.saveAll(getPostDataInit(5));
+        posts = PostRepository.findAll();
         user = posts.get(0).getUser();
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
     }
 
-    String content = FixtureMonkeyUtil.getRandomStringArbitrary(5, 20).sample();
+    String content = "content";
 
     @DisplayName("게시물 생성 - 정상 동작")
     @Transactional
     @Test
     void test1() {
         // given
-        PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                .giveMeBuilder(PostRequestDto.class)
-                .set("contents", content)
-                .sample();
+        PostRequestDto requestDto = new PostRequestDto("게시글 생성");
         // when
         PostResponseDto responseDto = PostService.save(requestDto);
 
@@ -85,7 +91,8 @@ class PostServiceTest extends OttoonApplicationTests {
             // when
             List<PostResponseDto> responseDto = PostService.getAll(page);
             List<PostResponseDto> sortedPosts = posts.stream()
-                    .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                    .sorted(Comparator.comparing(Post::isTop).reversed()
+                            .thenComparing(Post::getId).reversed())
                     .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
                     .toList();
             // then
@@ -119,16 +126,13 @@ class PostServiceTest extends OttoonApplicationTests {
             // given
             Long postId = posts.get(0).getId();
 
-            PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                    .giveMeBuilder(PostRequestDto.class)
-                    .set("contents", content)
-                    .sample();
+            PostRequestDto requestDto = new PostRequestDto("게시물 업데이트_본인");
 
             // when
             PostResponseDto responseDto = PostService.update(postId, requestDto);
 
             // then
-            assertEquals(content, requestDto.getContents());
+            assertEquals(requestDto.getContents(), responseDto.getContents());
         }
 
         @DisplayName("게시물 업데이트_Admin")
@@ -142,16 +146,13 @@ class PostServiceTest extends OttoonApplicationTests {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
 
-            PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
-                    .giveMeBuilder(PostRequestDto.class)
-                    .set("contents", content)
-                    .sample();
+            PostRequestDto requestDto = new PostRequestDto("게시물 업데이트_admin");
 
             // when
             PostResponseDto responseDto = PostService.update(postId, requestDto);
 
             // then
-            assertEquals(content, requestDto.getContents());
+            assertEquals(requestDto.getContents(), responseDto.getContents());
         }
 
         @DisplayName("게시물 업데이트_다른 사람")
