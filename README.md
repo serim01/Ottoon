@@ -6,4 +6,4 @@ ERD
 https://github.com/JulySoon/Ottoon/tree/main
 
 Jacoco
-https://github.com/JulySoon/Ottoon/tree/main
+![image](https://github.com/JulySoon/Ottoon/assets/94772043/8834f2cd-958c-46fc-bfe5-f8f968be8653)
