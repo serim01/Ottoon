@@ -36,6 +36,12 @@ public class Post extends Timestamped {
         this.postStatus = PostStatus.GENERAL;
     }
 
+    public Post(String contents, User user) {
+        this.contents = contents;
+        this.postStatus = PostStatus.GENERAL;
+        this.user = user;
+    }
+
     public void updateUser(User user) {
         this.user = user;
     }
