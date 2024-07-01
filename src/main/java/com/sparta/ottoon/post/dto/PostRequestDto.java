@@ -1,6 +1,5 @@
 package com.sparta.ottoon.post.dto;
 
-import com.sparta.ottoon.post.entity.Post;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +12,5 @@ public class PostRequestDto {
 
     public PostRequestDto(String contents) {
         this.contents = contents;
-    }
-
-    public Post toEntity() {
-        return new Post(this.contents);
     }
 }

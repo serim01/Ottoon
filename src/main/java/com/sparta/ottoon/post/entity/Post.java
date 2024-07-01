@@ -1,12 +1,16 @@
 package com.sparta.ottoon.post.entity;
 
 import com.sparta.ottoon.auth.entity.User;
+import com.sparta.ottoon.comment.entity.Comment;
 import com.sparta.ottoon.common.Timestamped;
+import com.sparta.ottoon.like.entity.Like;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,18 +35,21 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private boolean isTop;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
     public Post(String contents) {
         this.contents = contents;
         this.postStatus = PostStatus.GENERAL;
     }
 
+    @Builder
     public Post(String contents, User user) {
         this.contents = contents;
         this.postStatus = PostStatus.GENERAL;
-        this.user = user;
-    }
-
-    public void updateUser(User user) {
         this.user = user;
     }
 

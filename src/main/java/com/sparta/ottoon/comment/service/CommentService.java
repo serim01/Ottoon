@@ -1,7 +1,6 @@
 package com.sparta.ottoon.comment.service;
 
 import com.sparta.ottoon.auth.entity.User;
-import com.sparta.ottoon.auth.jwt.JwtUtil;
 import com.sparta.ottoon.auth.repository.UserRepository;
 import com.sparta.ottoon.comment.dto.CommentRequestDto;
 import com.sparta.ottoon.comment.dto.CommentResponseDto;
@@ -41,13 +40,6 @@ public class CommentService {
         Comment saveComment= commentRepository.save(comment);
         return new CommentResponseDto(saveComment);
     }
-//    public CommentResponseDto createComment(Long postId, CommentRequestDto commentRequestDto, String username) {
-//        User user = userRepository.findByUsername(username).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
-//        Post post = postRepository.findByPostId(postId).orElseThrow(()-> new CustomException(ErrorCode.POST_NOT_FOUND));
-//        Comment comment = new Comment (commentRequestDto.getComment(),user,post);
-//        Comment saveComment= commentRepository.save(comment);
-//        return new CommentResponseDto(saveComment);
-//    }
 
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getComment(Long postId) {
@@ -57,6 +49,16 @@ public class CommentService {
         // 해당 post 조회
         List<Comment> commentList = commentRepository.findByPostId(post.getId());
         return commentList.stream().map(CommentResponseDto::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public  CommentResponseDto getCommentById(Long postId, Long commentId){
+        // post 찾기
+        Post post = postRepository.findById(postId).orElseThrow(()->
+                new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        return commentRepository.findWithLikeCountById(commentId).orElseThrow(()
+                -> new CustomException(ErrorCode.FAIL_GETCOMMENT));
     }
 
     @Transactional

@@ -34,10 +34,15 @@ public class CommentController {
     //comment 조회
     @Operation(summary = "getComment", description = "댓글 조회 기능입니다.")
     @GetMapping("/comment")
-    public ResponseEntity<List<CommentResponseDto>> getComment(@PathVariable Long postId
-                                                               ){
+    public ResponseEntity<List<CommentResponseDto>> getComment(@PathVariable Long postId){
             return ResponseEntity.ok().body(commentService.getComment(postId));
         }
+
+    @Operation(summary = "getCommentById", description = "댓글 선택 조회 기능입니다.")
+    @GetMapping("/comment/{commentId}")
+    public ResponseEntity<CommentResponseDto> getCommentById(@PathVariable Long postId, @PathVariable Long commentId){
+        return ResponseEntity.ok().body(commentService.getCommentById(postId, commentId));
+    }
 
     //comment 수정
     @Operation(summary = "updateComment", description = "댓글 수정 기능입니다.")

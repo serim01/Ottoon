@@ -13,10 +13,6 @@ import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.repository.PostRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
@@ -54,9 +50,6 @@ class PostServiceTest extends OttoonApplicationTests {
     void setUp() {
         posts = PostRepository.findAll();
         user = posts.get(0).getUser();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
     }
 
     String content = "content";
@@ -68,7 +61,7 @@ class PostServiceTest extends OttoonApplicationTests {
         // given
         PostRequestDto requestDto = new PostRequestDto("게시글 생성");
         // when
-        PostResponseDto responseDto = PostService.save(requestDto);
+        PostResponseDto responseDto = PostService.save(requestDto, user.getUsername());
 
         // then
         Post createPost = PostRepository.findById(responseDto.getPostId()).orElse(null);
@@ -129,7 +122,7 @@ class PostServiceTest extends OttoonApplicationTests {
             PostRequestDto requestDto = new PostRequestDto("게시물 업데이트_본인");
 
             // when
-            PostResponseDto responseDto = PostService.update(postId, requestDto);
+            PostResponseDto responseDto = PostService.update(postId, requestDto, user.getUsername());
 
             // then
             assertEquals(requestDto.getContents(), responseDto.getContents());
@@ -142,14 +135,11 @@ class PostServiceTest extends OttoonApplicationTests {
             // given
             Long postId = posts.get(0).getId();
             User user = userRepository.save(new User("testAdmin", "testNickname", "testPassword", "test@email.com", UserStatus.ADMIN));
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            securityContext.setAuthentication(authentication);
 
             PostRequestDto requestDto = new PostRequestDto("게시물 업데이트_admin");
 
             // when
-            PostResponseDto responseDto = PostService.update(postId, requestDto);
+            PostResponseDto responseDto = PostService.update(postId, requestDto,user.getUsername());
 
             // then
             assertEquals(requestDto.getContents(), responseDto.getContents());
@@ -162,9 +152,6 @@ class PostServiceTest extends OttoonApplicationTests {
             // given
             Long postId = posts.get(0).getId();
             User another = userRepository.save(new User("Another_test", "testNickname", "testPassword", "test@email.com", UserStatus.ACTIVE));
-            Authentication authentication = new UsernamePasswordAuthenticationToken(another.getUsername(), another.getPassword());
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            securityContext.setAuthentication(authentication);
 
             PostRequestDto requestDto = FixtureMonkeyUtil.monkey()
                     .giveMeBuilder(PostRequestDto.class)
@@ -173,7 +160,7 @@ class PostServiceTest extends OttoonApplicationTests {
 
             // when
             CustomException exception = assertThrows(CustomException.class,
-                    () -> PostService.update(postId, requestDto));
+                    () -> PostService.update(postId, requestDto, another.getUsername()));
 
             // then
             assertEquals(exception.getErrorCode(), ErrorCode.BAD_AUTH_PUT);
@@ -189,7 +176,7 @@ class PostServiceTest extends OttoonApplicationTests {
             // given
             Long postId = posts.get(0).getId();
             // when
-            PostService.delete(postId);
+            PostService.delete(postId, user.getUsername());
 
             // then
             CustomException exception = assertThrows(CustomException.class,
@@ -197,19 +184,17 @@ class PostServiceTest extends OttoonApplicationTests {
 
             assertEquals(exception.getErrorCode(), ErrorCode.BAD_POST_ID);
         }
+
         @DisplayName("게시물 삭제_다른사람")
         @Test
         public void test2() {
             // given
             Long postId = posts.get(0).getId();
             User another = userRepository.findByUsername("Another_test").orElseThrow();
-            Authentication authentication = new UsernamePasswordAuthenticationToken(another.getUsername(), another.getPassword());
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            securityContext.setAuthentication(authentication);
 
             // when
             CustomException exception = assertThrows(CustomException.class,
-                    () -> PostService.delete(postId));
+                    () -> PostService.delete(postId, another.getUsername()));
             //then
             assertEquals(exception.getErrorCode(), ErrorCode.BAD_AUTH_DELETE);
         }

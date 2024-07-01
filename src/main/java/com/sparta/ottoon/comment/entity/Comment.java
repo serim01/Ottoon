@@ -2,11 +2,15 @@ package com.sparta.ottoon.comment.entity;
 
 import com.sparta.ottoon.auth.entity.User;
 import com.sparta.ottoon.common.Timestamped;
+import com.sparta.ottoon.like.entity.Like;
 import com.sparta.ottoon.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,12 +32,16 @@ public class Comment extends Timestamped {
     @JoinColumn(name="post_id")
     private Post post;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
     @Builder
     public Comment(String comment, User user, Post post) {
         this.comment = comment;
         this.user = user;
         this.post = post;
     }
+
     public void updateComment(String comment){
         this.comment = comment;
     }

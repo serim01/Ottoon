@@ -89,8 +89,8 @@ class CommentServiceIntegrationTest {
         // Given
         Long postId = 1L;
         List<Comment> commentList = new ArrayList<>();
-        Comment comment1 = Comment.builder().comment("comment1").build();
-        Comment comment2 = Comment.builder().comment("comment2").build();
+        Comment comment1 = Comment.builder().comment("comment1").user(user).build();
+        Comment comment2 = Comment.builder().comment("comment2").user(user).build();
         commentList.add(comment1);
         commentList.add(comment2);
 

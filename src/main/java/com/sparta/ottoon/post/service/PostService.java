@@ -14,12 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -31,11 +28,13 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public PostResponseDto save(PostRequestDto postRequestDto) {
-        Long logInUserId = getLogInUserId();
-        User user = getUserById(logInUserId);
-        Post post = postRequestDto.toEntity();
-        post.updateUser(user);
+    public PostResponseDto save(PostRequestDto postRequestDto, String username) {
+        User user = findUserByUsername(username);
+        Post post = Post.builder()
+                .contents(postRequestDto.getContents())
+                .user(user)
+                .build();
+
         post = postRepository.save(post);
 
         return PostResponseDto.toDto("게시글 등록 완료", 200, post);
@@ -43,9 +42,8 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostResponseDto findById(long postId) {
-        Post post = findPostById(postId);
-
-        return PostResponseDto.toDto("부분 게시글 조회 완료", 200, post);
+        return postRepository.findWithLikeCountById(postId).orElseThrow(()
+                -> new CustomException(ErrorCode.POST_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -61,30 +59,27 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto update(long postId, PostRequestDto postRequestDto) {
+    public PostResponseDto update(long postId, PostRequestDto postRequestDto, String username) {
         Post post = findPostById(postId);
-        Long logInUserId = getLogInUserId();
-        User user = getUserById(logInUserId);
+        User user = findUserByUsername(username);
 
         // 본인 계정 혹은 관리자 계정이면 게시글 수정 가능
-        if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
+        if (user.getId().equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
             post.update(postRequestDto.getContents());
 
             return PostResponseDto.toDto("게시글 수정 완료", 200, post);
         } else {
-
             throw new CustomException(ErrorCode.BAD_AUTH_PUT);
         }
     }
 
     @Transactional
-    public void delete(long postId) {
+    public void delete(long postId, String username) {
         Post post = findPostById(postId);
-        Long logInUserId = getLogInUserId();
-        User user = getUserById(logInUserId);
+        User user = findUserByUsername(username);
 
         // 본인 계정 혹은 관리자 계정이면 게시글 삭제 가능
-        if (logInUserId.equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
+        if (user.getId().equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
             postRepository.delete(post);
             PostResponseDto.toDeleteResponse("게시글 삭제 완료", 200);
         } else {
@@ -96,16 +91,7 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.BAD_POST_ID));
     }
 
-    private User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
-
-    private Long getLogInUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return user.getId();
-    }
-
 }
