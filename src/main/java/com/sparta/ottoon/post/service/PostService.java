@@ -37,7 +37,7 @@ public class PostService {
 
         post = postRepository.save(post);
 
-        return PostResponseDto.toDto("게시글 등록 완료", 200, post);
+        return new PostResponseDto(post);
     }
 
     @Transactional(readOnly = true)
@@ -47,12 +47,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAll(int page) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "isTop").and(Sort.by(Sort.Direction.DESC, "id"));
-        Pageable pageable = PageRequest.of(page, 5, sort);
-        Page<PostResponseDto> postPage = postRepository.findAll(pageable).map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post));
-
-
+    public List<PostResponseDto> getAll(int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "isTop").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PostResponseDto> postPage = postRepository.findAll(pageable).map(PostResponseDto::new);
+        if (postPage.isEmpty()) {
+            throw new CustomException(ErrorCode.POST_EMPTY);
+        }
         return postPage
                 .stream()
                 .toList();
@@ -67,7 +68,7 @@ public class PostService {
         if (user.getId().equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
             post.update(postRequestDto.getContents());
 
-            return PostResponseDto.toDto("게시글 수정 완료", 200, post);
+            return new PostResponseDto(post);
         } else {
             throw new CustomException(ErrorCode.BAD_AUTH_PUT);
         }
@@ -81,7 +82,6 @@ public class PostService {
         // 본인 계정 혹은 관리자 계정이면 게시글 삭제 가능
         if (user.getId().equals(post.getUser().getId()) || user.getStatus().equals(UserStatus.ADMIN)) {
             postRepository.delete(post);
-            PostResponseDto.toDeleteResponse("게시글 삭제 완료", 200);
         } else {
             throw new CustomException(ErrorCode.BAD_AUTH_DELETE);
         }

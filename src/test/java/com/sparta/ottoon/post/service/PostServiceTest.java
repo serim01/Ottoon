@@ -81,12 +81,13 @@ class PostServiceTest extends OttoonApplicationTests {
         void test1() {
             //given
             int page = 0;
+            int size = 5;
             // when
-            List<PostResponseDto> responseDto = PostService.getAll(page);
+            List<PostResponseDto> responseDto = PostService.getAll(page, size);
             List<PostResponseDto> sortedPosts = posts.stream()
                     .sorted(Comparator.comparing(Post::isTop).reversed()
                             .thenComparing(Post::getId).reversed())
-                    .map(post -> PostResponseDto.toDto("전체 게시글 조회 완료", 200, post))
+                    .map(PostResponseDto::new)
                     .toList();
             // then
             assertEquals(sortedPosts.get(0).getContents(), responseDto.get(0).getContents());

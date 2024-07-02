@@ -8,11 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface LikeRepository extends JpaRepository<Like, Long> {
+public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositoryCustom {
     Optional<Like> findByPostAndUser(Post post, User user);
     Optional<Like> findByCommentAndUser(Comment comment, User user);
-
-    Long countByPost(Post post);
-    Long countByComment(Comment comment);
 }
 
