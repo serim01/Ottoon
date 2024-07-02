@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/post/{postId}/like").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/comment/{commentId}/like").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated()
         );
