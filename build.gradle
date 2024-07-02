@@ -62,9 +62,6 @@ repositories {
 }
 
 dependencies {
-    // Fixture Monkey
-    testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.20'
-
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -94,13 +91,17 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-jacocoTestReport {
-    reports {
-        html.required.set(true)
-        xml.required.set(false)
-        csv.required.set(false)
 
-        // 리포트 타입마다 리포트 저장 경로를 설정할 수 있습니다.
-        html.outputLocation.set(layout.buildDirectory.dir("jacoco/jacocoHtml"))
-    }
+def generated = 'src/main/generated'
+
+tasks.withType(JavaCompile){
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+sourceSets {
+    main.java.srcDirs += [ generated ]
+}
+
+clean{
+    delete file(generated)
 }

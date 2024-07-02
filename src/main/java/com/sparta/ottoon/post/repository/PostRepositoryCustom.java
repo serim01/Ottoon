@@ -4,6 +4,6 @@ import com.sparta.ottoon.post.dto.PostResponseDto;
 
 import java.util.Optional;
 
-public interface CustomPostRepository {
+public interface PostRepositoryCustom {
     Optional<PostResponseDto> findWithLikeCountById(Long id);
 }

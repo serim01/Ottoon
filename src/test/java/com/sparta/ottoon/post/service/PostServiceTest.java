@@ -182,7 +182,7 @@ class PostServiceTest extends OttoonApplicationTests {
             CustomException exception = assertThrows(CustomException.class,
                     () -> PostService.findById(postId));
 
-            assertEquals(exception.getErrorCode(), ErrorCode.BAD_POST_ID);
+            assertEquals(exception.getErrorCode(), ErrorCode.POST_NOT_FOUND);
         }
 
         @DisplayName("게시물 삭제_다른사람")

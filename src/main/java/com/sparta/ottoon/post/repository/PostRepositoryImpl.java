@@ -13,7 +13,7 @@ import static com.sparta.ottoon.post.entity.QPost.post;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomPostRepositoryImpl implements CustomPostRepository{
+public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
