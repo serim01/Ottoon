@@ -23,12 +23,13 @@ public class FollowService {
 
     @Transactional
     public ProfileResponseDto followUser(long followId, User user) {
-
+        if(followId == user.getId()){
+            throw new CustomException(ErrorCode.NOT_FOLLOW_SELF);
+        }
         User followUser = userService.findById(followId);
-
         Follow newFollow = new Follow(true, user.getId(), followUser);
 
-        if (!isAleadyFollow(followId, user)) {
+        if (!isAlreadyFollow(followId, user)) {
             followRepository.save(newFollow);
         }
 
@@ -37,7 +38,6 @@ public class FollowService {
 
     @Transactional
     public ProfileResponseDto followCancel(long followId, User user) {
-
         User followUser = userService.findById(followId);
         Follow cancelFollow = followRepository.findByFollowUserAndUserId(followUser, user.getId()).orElseThrow(() ->
                 new CustomException(ErrorCode.FAIL_FIND_USER));
@@ -51,12 +51,12 @@ public class FollowService {
         return new ProfileResponseDto(cancelFollow.getFollowUser());
     }
 
+    @Transactional(readOnly = true)
     public List<Follow> getFollowList(long userId) {
         return followRepository.findAllByFollowUserId(userId);
     }
 
-    @Transactional
-    public boolean isAleadyFollow(long followId, User user) {
+    private boolean isAlreadyFollow(long followId, User user) {
         User followUser = userService.findById(followId);
         Optional<Follow> curFollow = followRepository.findByFollowUserAndUserId(followUser, user.getId());
         if (curFollow.isPresent()) {

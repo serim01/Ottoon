@@ -31,6 +31,7 @@ public enum ErrorCode {
     FAIL_COMMENTSELF(400,"본인 댓글에는 좋아요를 할수 없습니다." ),
     NOT_FOLLOW(400, "팔로우 되어있지 않은 사용자입니다."),
     BAD_FOLLOW(400, "이미 팔로우한 사용자입니다."),
+    NOT_FOLLOW_SELF(400,"본인을 팔로우할 수 없습니다."),
     POST_EMPTY(204, "먼저 게시글을 작성하세요.");
 
     private int status;
