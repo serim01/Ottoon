@@ -32,7 +32,7 @@ public class Post extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private PostStatus postStatus;
 
-    @Column(nullable = false)
+    @Column(name = "is_top",nullable = false)
     private boolean isTop;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,5 +65,10 @@ public class Post extends Timestamped {
             this.postStatus = PostStatus.NOTICE;
             this.isTop = true;
         }
+    }
+
+    // Boolean 필드에 대한 getter는 'is'로 시작해야 함
+    public boolean isTop() {
+        return isTop;
     }
 }

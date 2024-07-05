@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,13 +42,11 @@ public class PostController {
     // 게시글 전체 조회
     @Operation(summary = "getPostAll", description = "게시글 전체 조회 기능입니다.")
     @GetMapping("/posts")
-//    public ResponseEntity<Map<String, Object>> getAll() {
-    public ResponseEntity<CommonResponseDto<List<PostResponseDto>>> getAll(@RequestParam(value = "page", defaultValue = "1") int page,
-                                                                           @RequestParam(value = "size", defaultValue = "5") int size) {
+    public ResponseEntity<CommonResponseDto<List<PostResponseDto>>> getAll(@PageableDefault(page = 0, size=5) Pageable pageable) {
         CommonResponseDto<List<PostResponseDto>> commonResponseDto = new CommonResponseDto<>(
                 "게시글 전체 조회 성공",
                 HttpStatus.OK.value(),
-                postService.getAll(page - 1, size)
+                postService.getAll(pageable)
         );
         return ResponseEntity.ok().body(commonResponseDto);
 

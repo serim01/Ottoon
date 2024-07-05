@@ -11,9 +11,7 @@ import com.sparta.ottoon.post.entity.Post;
 import com.sparta.ottoon.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,15 +45,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAll(int page, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "isTop").and(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PostResponseDto> postPage = postRepository.findAll(pageable).map(PostResponseDto::new);
-        if (postPage.isEmpty()) {
+    public List<PostResponseDto> getAll(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
+       if (postPage.isEmpty()) {
             throw new CustomException(ErrorCode.POST_EMPTY);
         }
-        return postPage
-                .stream()
+        return postPage.stream()
+                .map(PostResponseDto::new)
                 .toList();
     }
 

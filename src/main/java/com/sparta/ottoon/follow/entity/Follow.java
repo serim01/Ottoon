@@ -18,11 +18,11 @@ public class Follow {
     @Column(name = "follow_check", nullable = false)
     boolean isFollow;
 
-    @Column(name = "follow_user_id",nullable = false)
+    @Column(name = "follow_user_id",nullable = false) //나
     long userId;
 
     @ManyToOne
-    @JoinColumn(name = "followed_user_id")
+    @JoinColumn(name = "followed_user_id") //한사람
     User followUser;
 
     public Follow(boolean isFollow, long userId, User followUser) {
